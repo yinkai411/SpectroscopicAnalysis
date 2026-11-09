@@ -12,7 +12,7 @@
 
 ## 技术栈（不得擅自变更或新增依赖）
 
-.NET 8 · WPF+MVVM · HandyControl（UI 组件库，已登记）· NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记。
+.NET 8 · WPF+MVVM · HandyControl（UI 组件库，已登记）· LiveCharts2（图表库，已登记）· NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记；UI 美化类插件（图表/图标/动画等）登记后可直接引入。
 
 ## 目录约定
 

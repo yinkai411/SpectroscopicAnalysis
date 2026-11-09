@@ -1,0 +1,40 @@
+# SpectroscopicAnalysis 统一代码风格（配合开发规范第 4/11 节）
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,xaml}]
+indent_style = space
+indent_size = 4
+
+[*.cs]
+# 可空引用 + 分析器告警一律视为错误（csproj 亦已启用 TreatWarningsAsErrors）
+dotnet_diagnostic.CS8600.severity = error
+dotnet_diagnostic.CS8601.severity = error
+dotnet_diagnostic.CS8602.severity = error
+dotnet_diagnostic.CS8603.severity = error
+dotnet_diagnostic.CS8604.severity = error
+# 禁止空 catch（开发规范 11.4）
+dotnet_diagnostic.CS0168.severity = error
+
+# 命名与风格（PascalCase 类型/方法、_camelCase 私有字段）
+dotnet_style_require_accessibility_modifiers = always:suggestion
+dotnet_naming_rule.private_fields_underscore.severity = suggestion
+dotnet_naming_rule.private_fields_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_underscore.style = underscore_camel
+dotnet_naming_symbols.private_fields.applicable_kinds = fields
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.underscore_camel.required_prefix = _
+dotnet_naming_style.underscore_camel.capitalization = camel_case
+
+# file-scoped namespace（开发规范第 4 节）
+csharp_style_namespace_declarations = file_scoped:error
+csharp_style_prefer_using_var_when_type_apparent = suggestion
+
+[*.{md,yml,yaml,json}]
+indent_style = space
+indent_size = 2

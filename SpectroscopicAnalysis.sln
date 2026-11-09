@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B95C6E22-BDC5-46CE-84DD-370EDA3D6249}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectroscopicAnalysis.Host", "src\SpectroscopicAnalysis.Host\SpectroscopicAnalysis.Host.csproj", "{8C33E526-51EB-4DC5-9905-B7203CB17F21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AB22BB9A-C87F-4371-BC6F-38094D4020D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectroscopicAnalysis.Tests", "tests\SpectroscopicAnalysis.Tests\SpectroscopicAnalysis.Tests.csproj", "{DE9DB961-41BA-46ED-AF77-DE25C926C0FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C33E526-51EB-4DC5-9905-B7203CB17F21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C33E526-51EB-4DC5-9905-B7203CB17F21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C33E526-51EB-4DC5-9905-B7203CB17F21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C33E526-51EB-4DC5-9905-B7203CB17F21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE9DB961-41BA-46ED-AF77-DE25C926C0FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE9DB961-41BA-46ED-AF77-DE25C926C0FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE9DB961-41BA-46ED-AF77-DE25C926C0FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE9DB961-41BA-46ED-AF77-DE25C926C0FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8C33E526-51EB-4DC5-9905-B7203CB17F21} = {B95C6E22-BDC5-46CE-84DD-370EDA3D6249}
+		{DE9DB961-41BA-46ED-AF77-DE25C926C0FA} = {AB22BB9A-C87F-4371-BC6F-38094D4020D3}
+	EndGlobalSection
+EndGlobal

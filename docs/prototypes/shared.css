@@ -1,0 +1,308 @@
+/* ============================================================
+   SpectroscopicAnalysis 上位机界面原型 · 共享样式
+   依据：docs/界面设计规范.md（浅色简洁风 + HandyControl 语义）
+   色值/字号/布局均与规范一一对应，作为 WPF 开发像素级参照
+   ============================================================ */
+
+:root {
+  /* ---- 3.1 基础色板 ---- */
+  --color-bg-page: #F5F6F8;
+  --color-bg-card: #FFFFFF;
+  --color-border-default: #E5E7EB;
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-danger: #DC2626;
+
+  /* ---- 3.2 文字层级 ---- */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-disabled: #D1D5DB;
+
+  /* ---- 3.3 状态色（语义固定） ---- */
+  --color-status-running: #16A34A;
+  --color-status-idle: #9CA3AF;
+  --color-status-warning: #F59E0B;
+  --color-status-failed: #DC2626;
+  --color-status-emergency: #991B1B;
+  --color-status-info: #2563EB;
+
+  /* ---- 布局常量 ---- */
+  --topbar-h: 56px;
+  --sidebar-w: 240px;
+  --radius-card: 8px;
+  --font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
+}
+
+/* ============ 布局骨架（规范第 5 节） ============ */
+
+/* 顶栏 56px */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+}
+.topbar .brand {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.topbar .spacer { flex: 1; }
+.topbar .clock, .topbar .user {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* 系统模式切换（规范 6：单选高亮） */
+.mode-switch { display: flex; gap: 4px; }
+.mode-switch .mode-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.mode-switch .mode-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+.mode-switch .mode-btn.active.emergency { background: var(--color-status-emergency); border-color: var(--color-status-emergency); }
+
+/* PLC 心跳/通信状态 */
+.comm-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.running { background: var(--color-status-running); }
+.dot.idle { background: var(--color-status-idle); }
+.dot.warning { background: var(--color-status-warning); }
+.dot.failed { background: var(--color-status-failed); }
+.dot.emergency { background: var(--color-status-emergency); }
+
+/* 急停按钮（规范 5：全局常驻，≥48px，深红高对比） */
+.estop-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--color-status-emergency);
+  background: #FFFFFF;
+  color: var(--color-status-emergency);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.estop-btn:hover { background: var(--color-status-emergency); color: #FFFFFF; }
+
+/* 主体：左栏 240px + 内容卡片流 */
+.layout { display: flex; margin-top: var(--topbar-h); min-height: calc(100vh - var(--topbar-h)); }
+
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--color-bg-card);
+  border-right: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: var(--topbar-h);
+  bottom: 0;
+}
+.nav { flex: 1; padding: 12px 8px; }
+.nav a {
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav a:hover { background: var(--color-bg-page); color: var(--color-text-primary); }
+.nav a.active { background: var(--color-primary); color: #FFFFFF; font-weight: 600; }
+
+/* 设备状态固定区（规范 5：常驻可见） */
+.device-panel {
+  border-top: 1px solid var(--color-border-default);
+  padding: 12px;
+}
+.device-panel h4 {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.device-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.content {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 卡片（圆角 8px 轻阴影） */
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.card .card-title {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card .card-body { padding: 16px; }
+
+/* 页面标题 */
+.page-title { font-size: 20px; font-weight: 600; }
+
+/* ============ 状态徽章（颜色+文字双表达，规范 3.3） ============ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge.running { background: #DCFCE7; color: var(--color-status-running); }
+.badge.idle    { background: #F3F4F6; color: var(--color-text-secondary); }
+.badge.warning { background: #FEF3C7; color: #B45309; }
+.badge.failed  { background: #FEE2E2; color: var(--color-status-failed); }
+.badge.emergency { background: #FEE2E2; color: var(--color-status-emergency); }
+.badge.info    { background: #DBEAFE; color: var(--color-primary); }
+
+/* ============ 表格 ============ */
+table.grid { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.grid th {
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--color-bg-page);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  font-size: 12px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+table.grid td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+/* ============ 按钮 ============ */
+.btn {
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn.primary { background: var(--color-primary); border-color: var(--color-primary); color: #FFFFFF; }
+.btn.primary:hover { background: var(--color-primary-hover); }
+.btn.danger { background: var(--color-danger); border-color: var(--color-danger); color: #FFFFFF; }
+.btn.ghost { border-color: var(--color-primary); color: var(--color-primary); background: transparent; }
+.btn.small { padding: 3px 10px; font-size: 12px; }
+.btn:disabled { background: var(--color-text-disabled); border-color: var(--color-text-disabled); color: #FFFFFF; cursor: not-allowed; }
+
+/* ============ StepBar 任务步骤（规范 8：StepBar） ============ */
+.stepbar { display: flex; align-items: center; margin: 8px 0; }
+.stepbar .step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.stepbar .step .node {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--color-text-disabled);
+  background: var(--color-bg-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--color-text-disabled);
+}
+.stepbar .step.done .node { border-color: var(--color-status-running); background: var(--color-status-running); color: #FFFFFF; }
+.stepbar .step.current .node { border-color: var(--color-primary); color: var(--color-primary); }
+.stepbar .step .label { font-size: 12px; color: var(--color-text-secondary); }
+.stepbar .step.done .label, .stepbar .step.current .label { color: var(--color-text-primary); }
+.stepbar .connector { flex: 1; height: 2px; background: var(--color-border-default); margin: 0 -8px 16px; }
+.stepbar .connector.done { background: var(--color-status-running); }
+
+/* ============ 报警条四级（规范 7） ============ */
+.alarm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  border-left: 4px solid;
+}
+.alarm-item .alarm-time { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+.alarm-item.info     { background: #DBEAFE; border-left-color: var(--color-status-info); color: #1E40AF; }
+.alarm-item.warning  { background: #FEF3C7; border-left-color: var(--color-status-warning); color: #92400E; }
+.alarm-item.fault    { background: #FEE2E2; border-left-color: var(--color-status-failed); color: #991B1B; }
+.alarm-item.emergency{ background: #FECACA; border-left-color: var(--color-status-emergency); color: var(--color-status-emergency); font-weight: 600; }
+
+/* ============ 确认弹窗（规范 8：危险操作二次确认） ============ */
+.modal-mask {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 200;
+  align-items: center; justify-content: center;
+}
+.modal-mask.show { display: flex; }
+.modal {
+  width: 420px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.modal .modal-title { padding: 16px; font-size: 16px; font-weight: 600; border-bottom: 1px solid var(--color-border-default); }
+.modal .modal-body { padding: 16px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+.modal .modal-footer { padding: 12px 16px; border-top: 1px solid var(--color-border-default); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ============ 通用工具类 ============ */
+.text-secondary { color: var(--color-text-secondary); }
+.text-12 { font-size: 12px; }
+.mono { font-family: Consolas, monospace; }
+.row { display: flex; gap: 12px; }
+.grow { flex: 1; }
+.tag-filter { display: flex; gap: 8px; margin-bottom: 12px; }
+.tag-filter .tf {
+  padding: 4px 12px; border-radius: 12px; font-size: 12px;
+  border: 1px solid var(--color-border-default); background: var(--color-bg-card);
+  color: var(--color-text-secondary); cursor: pointer;
+}
+.tag-filter .tf.active { background: var(--color-primary); border-color: var(--color-primary); color: #FFF; }
+
+/* KPI 大数值（规范 4：28-32 SemiBold） */
+.kpi { font-size: 28px; font-weight: 600; }
+.kpi-label { font-size: 12px; color: var(--color-text-secondary); }

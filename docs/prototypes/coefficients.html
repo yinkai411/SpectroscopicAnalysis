@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>系数管理 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .tab-bar { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border-default); }
+  .tab-bar .tab {
+    padding: 8px 18px; font-size: 14px; cursor: pointer;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid transparent;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab-bar .tab.active { color: var(--color-primary); border-bottom: 2px solid var(--color-primary); font-weight: 600; }
+  .pane { display: none; }
+  .pane.show { display: block; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+  <span class="badge running">● 自动 · Auto</span>
+  <span class="spacer"></span>
+  <span class="comm-indicator"><span class="dot running"></span>PLC</span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="alert('原型演示：触发急停（需二次确认）')">急停</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html">主控台 · 生产监控</a>
+      <a href="samples.html">样品档案</a>
+      <a href="sct.html">SCT 管理</a>
+      <a href="coefficients.html" class="active">系数管理</a>
+      <a href="alarms.html">日志报警</a>
+      <a href="settings.html">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">系数管理</span>
+      <span class="text-12 text-secondary">生产样品结果 = a × I + b（应用最新版本系数）；原始与校正数据双存；变更全量审计</span>
+    </div>
+
+    <div class="card">
+      <div class="tab-bar" style="padding:0 16px;">
+        <button class="tab active" data-pane="p1" onclick="switchTab(this)">当前有效系数</button>
+        <button class="tab" data-pane="p2" onclick="switchTab(this)">变更历史</button>
+        <button class="tab" data-pane="p3" onclick="switchTab(this)">干扰系数矩阵</button>
+      </div>
+
+      <!-- Pane 1: 当前系数 -->
+      <div class="pane show card-body" id="p1">
+        <div class="row" style="margin-bottom:12px; align-items:center;">
+          <span class="text-secondary text-12">分析方法：</span>
+          <span class="badge info mono">AL-6061 常规分析</span>
+          <span class="badge info mono">STD-AL-Drift（设置样）</span>
+          <span class="spacer grow"></span>
+          <span class="text-12 text-secondary">当前系数版本组：<b class="mono" style="color:var(--color-text-primary)">v23</b> · 生效 2026-11-09 08:02 · 来源 SUS-002</span>
+        </div>
+        <table class="grid">
+          <thead><tr>
+            <th>元素</th><th>斜率 a</th><th>截距 b</th><th>内标</th><th>版本</th><th>生效时间</th><th>来源设置样</th><th>状态</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="mono">Si</td><td class="mono">1.004230</td><td class="mono">-0.002140</td><td class="mono">Fe（内标）</td><td class="mono">v23</td><td class="mono">11-09 08:02</td><td class="mono">SUS-002</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Fe</td><td class="mono">0.998710</td><td class="mono">0.000320</td><td class="mono">—</td><td class="mono">v23</td><td class="mono">11-09 08:02</td><td class="mono">SUS-002</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Cu</td><td class="mono">1.012450</td><td class="mono">-0.000180</td><td class="mono">Fe（内标）</td><td class="mono">v19</td><td class="mono">11-08 20:31</td><td class="mono">SUS-001</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Mg</td><td class="mono">0.995620</td><td class="mono">0.000410</td><td class="mono">Fe（内标）</td><td class="mono">v23</td><td class="mono">11-09 08:02</td><td class="mono">SUS-002</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Mn</td><td class="mono">1.006780</td><td class="mono">-0.000290</td><td class="mono">—</td><td class="mono">v12</td><td class="mono">11-02 08:00</td><td class="mono">SUS-002</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Zn</td><td class="mono">1.020310</td><td class="mono">0.000150</td><td class="mono">Fe（内标）</td><td class="mono">v12</td><td class="mono">11-02 08:00</td><td class="mono">SUS-002</td><td><span class="badge running">● 当前</span></td></tr>
+          </tbody>
+        </table>
+        <div class="text-12 text-secondary" style="margin-top:10px;">
+          系数版本化管理：新版本生效后旧版本归档不删除；标准化只更新斜率/截距，干扰系数保持不变（开发规范 11.1 / 任务清单 六、）。
+        </div>
+      </div>
+
+      <!-- Pane 2: 变更历史 -->
+      <div class="pane card-body" id="p2">
+        <table class="grid">
+          <thead><tr>
+            <th>时间</th><th>方法</th><th>元素</th><th>变更前（a / b）</th><th>变更后（a / b）</th><th>版本</th><th>原因</th><th>来源</th><th>操作者</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">11-09 08:02</td><td class="mono">AL-6061</td><td class="mono">Si</td>
+              <td class="mono">0.981120 / -0.002002</td><td class="mono" style="color:var(--color-status-running)">1.004230 / -0.002140</td>
+              <td class="mono">v22→v23</td><td>班次开始定时标准化</td><td class="mono">SUS-002</td><td>系统自动</td>
+            </tr>
+            <tr>
+              <td class="mono">11-09 08:02</td><td class="mono">AL-6061</td><td class="mono">Fe</td>
+              <td class="mono">0.997010 / 0.000301</td><td class="mono" style="color:var(--color-status-running)">0.998710 / 0.000320</td>
+              <td class="mono">v22→v23</td><td>班次开始定时标准化</td><td class="mono">SUS-002</td><td>系统自动</td>
+            </tr>
+            <tr>
+              <td class="mono">11-08 20:31</td><td class="mono">AL-6061</td><td class="mono">Cu</td>
+              <td class="mono">1.015040 / -0.000190</td><td class="mono" style="color:var(--color-status-running)">1.012450 / -0.000180</td>
+              <td class="mono">v18→v19</td><td>控制样超差自动标准化</td><td class="mono">SUS-001</td><td>系统自动</td>
+            </tr>
+            <tr>
+              <td class="mono">11-08 14:02</td><td class="mono">AL-6061-Type6061</td><td class="mono">Mg</td>
+              <td class="mono">0.991240 / 0.000380</td><td class="mono" style="color:var(--color-status-running)">0.995620 / 0.000410</td>
+              <td class="mono">v7→v8</td><td>类型标准化（合金切换）</td><td class="mono">TS-6061-01</td><td>李工</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pane 3: 干扰矩阵 -->
+      <div class="pane card-body" id="p3">
+        <div class="text-12 text-secondary" style="margin-bottom:10px;">
+          模型：C<sub>i</sub> = a<sub>i</sub>·I<sub>i</sub> + b<sub>i</sub> + Σ k<sub>ij</sub>·C<sub>j</sub>（迭代 2–3 次求解）；标准化时 k<sub>ij</sub> 保持不变。
+        </div>
+        <table class="grid">
+          <thead><tr>
+            <th>目标元素 i</th><th>干扰元素 j</th><th>干扰系数 k_ij</th><th>来源</th><th>验证 R²</th><th>版本</th><th>状态</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="mono">Si</td><td class="mono">Fe</td><td class="mono">0.0042</td><td>厂家提供</td><td class="mono">0.987</td><td class="mono">v5</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Cu</td><td class="mono">Zn</td><td class="mono">0.0018</td><td>多标样回归</td><td class="mono">0.961</td><td class="mono">v2</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Mg</td><td class="mono">Si</td><td class="mono">-0.0029</td><td>多标样回归</td><td class="mono">0.958</td><td class="mono">v2</td><td><span class="badge running">● 当前</span></td></tr>
+            <tr><td class="mono">Mn</td><td class="mono">Fe</td><td class="mono">0.0007</td><td>经验值</td><td class="mono">—</td><td class="mono">v1</td><td><span class="badge idle">待验证</span></td></tr>
+          </tbody>
+        </table>
+        <div class="row" style="margin-top:12px;">
+          <button class="btn ghost small" onclick="alert('原型演示：打开离线回归工具（8–15 标样最小二乘，R²>0.95 可用）')">打开干扰系数回归工具（离线标定）</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('show'));
+  document.getElementById(tab.dataset.pane).classList.add('show');
+}
+</script>
+</body>
+</html>

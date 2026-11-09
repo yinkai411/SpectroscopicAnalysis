@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SCT 管理 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+  <span class="badge running">● 自动 · Auto</span>
+  <span class="spacer"></span>
+  <span class="comm-indicator"><span class="dot running"></span>PLC</span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="alert('原型演示：触发急停（需二次确认）')">急停</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html">主控台 · 生产监控</a>
+      <a href="samples.html">样品档案</a>
+      <a href="sct.html" class="active">SCT 管理</a>
+      <a href="coefficients.html">系数管理</a>
+      <a href="alarms.html">日志报警</a>
+      <a href="settings.html">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">SCT 管理</span>
+      <span class="badge info">◆ Setting-up / Control / Type Standardization</span>
+      <span class="spacer grow"></span>
+      <button class="btn primary small" onclick="alert('原型演示：立即触发标准化（高优先级任务入队）')">立即标准化</button>
+    </div>
+
+    <!-- SCT 正在执行：子状态 StepBar -->
+    <section class="card">
+      <div class="card-title">SCT 任务进行中：标准化（设置样 SUS-002）
+        <span class="badge info">触发原因：班次开始定时</span>
+      </div>
+      <div class="card-body">
+        <div class="stepbar">
+          <div class="step done"><div class="node">✓</div><div class="label">Selecting<br>选择样品</div></div>
+          <div class="connector done"></div>
+          <div class="step done"><div class="node">✓</div><div class="label">Retrieving<br>机器人取出</div></div>
+          <div class="connector done"></div>
+          <div class="step current"><div class="node">3</div><div class="label">MeasuringHeight<br>测高（50 次阈值）</div></div>
+          <div class="connector"></div>
+          <div class="step"><div class="node">4</div><div class="label">Milling<br>铣削（薄层）</div></div>
+          <div class="connector"></div>
+          <div class="step"><div class="node">5</div><div class="label">Analyzing<br>激发分析</div></div>
+          <div class="connector"></div>
+          <div class="step"><div class="node">6</div><div class="label">UpdatingCoeff<br>更新系数</div></div>
+          <div class="connector"></div>
+          <div class="step"><div class="node">7</div><div class="label">Returning<br>放回原位</div></div>
+        </div>
+        <div class="text-12 text-secondary">SCT 执行期间生产样品分析自动暂停（安全规范）；完成后自动恢复队列。</div>
+      </div>
+    </section>
+
+    <!-- 标样库三分组 -->
+    <div class="row">
+      <section class="card grow">
+        <div class="card-title">设置样 <span class="badge idle">2–4 块建议 · 用于漂移校正（更新系数）</span></div>
+        <div class="card-body">
+          <div class="device-row"><span class="comm-indicator"><span class="dot warning"></span>SUS-001（A01）</span><span class="badge warning">▲ 需测高 50/50</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SUS-002（A02）</span><span class="badge running">● 正常 18/50</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot failed"></span>SUS-003（A03）</span><span class="badge failed">✖ 禁用（过薄）</span></div>
+        </div>
+      </section>
+      <section class="card grow">
+        <div class="card-title">控制样 <span class="badge idle">3–6 块 · 状态监控（只判断不改系数）</span></div>
+        <div class="card-body">
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>CTL-001 低 · 1xxx（B01）</span><span class="badge running">● 正常</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot warning"></span>CTL-002 中 · 6xxx（B02）</span><span class="badge warning">▲ +2.4σ 逼近限</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>CTL-003 高 · 5xxx（B03）</span><span class="badge running">● 正常</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>CTL-004 低 · 3xxx（B04）</span><span class="badge running">● 正常</span></div>
+        </div>
+      </section>
+      <section class="card grow">
+        <div class="card-title">类型标准化样 <span class="badge idle">按合金系列 · 建立局部系数</span></div>
+        <div class="card-body">
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>TS-6061-01（C01）</span><span class="badge running">● 正常</span></div>
+          <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>TS-1050-01（C02）</span><span class="badge running">● 正常</span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 记录表 -->
+    <section class="card grow">
+      <div class="card-title">标准化 / 控制检查记录</div>
+      <table class="grid">
+        <thead><tr>
+          <th>时间</th><th>操作类型</th><th>样品</th><th>触发原因</th><th>结果</th><th>系数变更</th><th>偏差</th><th>操作者</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="mono">11-09 08:02</td><td>标准化 Standardization</td><td class="mono">SUS-002</td><td>班次开始定时</td><td><span class="badge running">✓ 成功</span></td><td class="mono">Si: v22→v23（a 0.981→1.004）</td><td class="mono">—</td><td>系统自动</td></tr>
+          <tr><td class="mono">11-08 20:15</td><td>控制检查 ControlCheck</td><td class="mono">CTL-002</td><td>每 20 个生产样插入</td><td><span class="badge warning">▲ 超差 +2.4σ</span></td><td class="text-secondary">不更新（仅判断）</td><td class="mono">+2.4σ</td><td>系统自动</td></tr>
+          <tr><td class="mono">11-08 20:31</td><td>标准化 Standardization</td><td class="mono">SUS-001</td><td>控制样超差自动触发</td><td><span class="badge running">✓ 成功</span></td><td class="mono">Fe: v18→v19</td><td class="mono">—</td><td>系统自动</td></tr>
+          <tr><td class="mono">11-08 20:44</td><td>控制验证 Re-verify</td><td class="mono">CTL-002</td><td>标准化后验证</td><td><span class="badge running">✓ 通过（+0.6σ）</span></td><td class="text-secondary">不更新</td><td class="mono">+0.6σ</td><td>系统自动</td></tr>
+          <tr><td class="mono">11-08 14:02</td><td>类型标准化 TypeStd</td><td class="mono">TS-6061-01</td><td>合金切换 1050→6061</td><td><span class="badge running">✓ 成功</span></td><td class="mono">6061 局部系数 v7→v8</td><td class="mono">—</td><td>李工</td></tr>
+          <tr><td class="mono">11-05 14:20</td><td>测高 HeightMeasure</td><td class="mono">SUS-003</td><td>使用次数达阈值</td><td><span class="badge failed">✖ 7.2&lt;8.0 过薄</span></td><td class="text-secondary">Status→Disabled，报警更换</td><td class="mono">—</td><td>系统自动</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 策略参数 -->
+    <section class="card">
+      <div class="card-title">SCT 策略参数 <span class="text-12 text-secondary">修改需管理员权限，保存后即时生效并记录审计日志</span></div>
+      <div class="card-body row">
+        <div class="grow">
+          <div class="text-12 text-secondary" style="margin-bottom:4px;">控制样按数量插入（每 N 个生产样）</div>
+          <input class="btn" style="width:100%;text-align:left;" value="20" readonly>
+        </div>
+        <div class="grow">
+          <div class="text-12 text-secondary" style="margin-bottom:4px;">控制样按时间插入（分钟）</div>
+          <input class="btn" style="width:100%;text-align:left;" value="120" readonly>
+        </div>
+        <div class="grow">
+          <div class="text-12 text-secondary" style="margin-bottom:4px;">控制限（σ）</div>
+          <input class="btn" style="width:100%;text-align:left;" value="±2.0（可选 ±3.0 / 百分比）" readonly>
+        </div>
+        <div class="grow">
+          <div class="text-12 text-secondary" style="margin-bottom:4px;">设置样定时标准化（班次）</div>
+          <input class="btn" style="width:100%;text-align:left;" value="每班开始 + 每 4 小时" readonly>
+        </div>
+        <div class="grow">
+          <div class="text-12 text-secondary" style="margin-bottom:4px;">连续超差暂停阈值</div>
+          <input class="btn" style="width:100%;text-align:left;" value="2 次 → 报警并暂停自动分析" readonly>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll('.tag-filter .tf')?.forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tag-filter .tf').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>设置 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .form-grid { display: grid; grid-template-columns: 200px 1fr; gap: 10px 16px; align-items: center; }
+  .form-grid label { font-size: 12px; color: var(--color-text-secondary); }
+  .form-grid input, .form-grid select {
+    padding: 7px 10px; border: 1px solid var(--color-border-default);
+    border-radius: 4px; font-size: 14px; font-family: inherit;
+    color: var(--color-text-primary); background: var(--color-bg-card); width: 100%;
+  }
+  .swatch-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .swatch { text-align: center; font-size: 12px; color: var(--color-text-secondary); }
+  .swatch .chip { width: 72px; height: 40px; border-radius: 6px; border: 1px solid var(--color-border-default); margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+  <span class="badge running">● 自动 · Auto</span>
+  <span class="spacer"></span>
+  <span class="comm-indicator"><span class="dot running"></span>PLC</span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="alert('原型演示：触发急停（需二次确认）')">急停</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html">主控台 · 生产监控</a>
+      <a href="samples.html">样品档案</a>
+      <a href="sct.html">SCT 管理</a>
+      <a href="coefficients.html">系数管理</a>
+      <a href="alarms.html">日志报警</a>
+      <a href="settings.html" class="active">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">设置</span>
+      <span class="text-12 text-secondary">修改通信/策略参数需管理员权限，保存前二次确认，修改记录入审计日志</span>
+    </div>
+
+    <div class="row">
+      <!-- 通信配置 -->
+      <section class="card grow">
+        <div class="card-title">通信配置（Modbus TCP · 当前）</div>
+        <div class="card-body form-grid">
+          <label>PLC IP 地址</label><input class="mono" value="192.168.10.11">
+          <label>PLC 端口（Modbus TCP 502）</label><input class="mono" value="502">
+          <label>PLC Unit-ID / Slave ID</label><input class="mono" value="1">
+          <label>状态轮询周期（ms）</label><input class="mono" value="500">
+          <label>心跳交换间隔（s，1–2）</label><input class="mono" value="1.0">
+          <label>通信超时（ms）</label><input class="mono" value="2000">
+          <label>重试上限（次，超限报警）</label><input class="mono" value="3">
+          <label>GNR 光谱仪地址（TCP 100–140 协议）</label><input class="mono" value="192.168.10.20:9004">
+          <label>铣床 PLC（预留）</label><input class="mono" value="未接入（人工上样流程）" disabled>
+        </div>
+        <div class="card-body text-12 text-secondary" style="padding-top:0;">
+          OPC UA 为预留升级实现（DeviceInterface 抽象，切换不改动业务层）；Modbus 网络须独立 VLAN / 白名单（安全规范）。
+        </div>
+      </section>
+
+      <!-- 全局策略 -->
+      <section class="card grow">
+        <div class="card-title">全局策略</div>
+        <div class="card-body form-grid">
+          <label>测高触发策略</label>
+          <select><option>UsageCount ≥ MaxUsageCount 时测高（文档规则）</option></select>
+          <label>样品位置一致性校验</label>
+          <select><option>切入 Auto 前强制校验（安全规范）</option></select>
+          <label>SCT 期间生产队列</label>
+          <select><option>自动暂停，完成后恢复（安全规范）</option></select>
+          <label>报警提示音</label>
+          <select><option>警告单次音 · 故障循环音 · 急停持续音</option></select>
+          <label>归档标签打印机</label><input class="mono" value="激光打标机 192.168.10.30（字符流协议）">
+          <label>数据保留策略</label>
+          <select><option>原始数据永久保留 · 归档系数版本不删除</option></select>
+        </div>
+      </section>
+    </div>
+
+    <!-- 用户管理 -->
+    <section class="card">
+      <div class="card-title">用户与权限 <span class="text-12 text-secondary">角色：管理员 / 操作员 / 观察员（系数修改、模式切换需管理员）</span></div>
+      <table class="grid">
+        <thead><tr><th>用户</th><th>角色</th><th>权限</th><th>最近登录</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>admin</td><td><span class="badge info">管理员</span></td><td>全部权限（含系数修改/模式切换/复位）</td><td class="mono">11-09 07:58</td><td><button class="btn small">编辑</button></td></tr>
+          <tr><td>张工</td><td><span class="badge running">操作员</span></td><td>生产操作 · 报警确认 · 样品录入</td><td class="mono">11-09 08:05</td><td><button class="btn small">编辑</button></td></tr>
+          <tr><td>李工</td><td><span class="badge running">操作员</span></td><td>生产操作 · 报警确认 · 类型标准化</td><td class="mono">11-08 14:01</td><td><button class="btn small">编辑</button></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 主题色板预览 -->
+    <section class="card">
+      <div class="card-title">界面主题色板预览 <span class="text-12 text-secondary">与界面设计规范第 3 节一致 · WPF 端将落地为 Themes/Colors.xaml</span></div>
+      <div class="card-body swatch-row">
+        <div class="swatch"><div class="chip" style="background:#2563EB"></div>Primary #2563EB</div>
+        <div class="swatch"><div class="chip" style="background:#16A34A"></div>运行 #16A34A</div>
+        <div class="swatch"><div class="chip" style="background:#9CA3AF"></div>待机 #9CA3AF</div>
+        <div class="swatch"><div class="chip" style="background:#F59E0B"></div>警告 #F59E0B</div>
+        <div class="swatch"><div class="chip" style="background:#DC2626"></div>故障 #DC2626</div>
+        <div class="swatch"><div class="chip" style="background:#991B1B"></div>急停 #991B1B</div>
+        <div class="swatch"><div class="chip" style="background:#F5F6F8"></div>页面背景 #F5F6F8</div>
+        <div class="swatch"><div class="chip" style="background:#1F2937"></div>主文字 #1F2937</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

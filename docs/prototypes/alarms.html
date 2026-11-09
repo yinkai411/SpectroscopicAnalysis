@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>日志报警 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .tab-bar { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border-default); }
+  .tab-bar .tab {
+    padding: 8px 18px; font-size: 14px; cursor: pointer;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid transparent;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab-bar .tab.active { color: var(--color-primary); border-bottom: 2px solid var(--color-primary); font-weight: 600; }
+  .pane { display: none; }
+  .pane.show { display: block; }
+  .filter-row input, .filter-row select {
+    padding: 6px 10px; border: 1px solid var(--color-border-default);
+    border-radius: 4px; font-size: 12px; font-family: inherit; color: var(--color-text-primary);
+    background: var(--color-bg-card);
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+  <span class="badge running">● 自动 · Auto</span>
+  <span class="spacer"></span>
+  <span class="comm-indicator"><span class="dot running"></span>PLC</span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="alert('原型演示：触发急停（需二次确认）')">急停</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html">主控台 · 生产监控</a>
+      <a href="samples.html">样品档案</a>
+      <a href="sct.html">SCT 管理</a>
+      <a href="coefficients.html">系数管理</a>
+      <a href="alarms.html" class="active">日志报警</a>
+      <a href="settings.html">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">日志报警</span>
+      <span class="spacer grow"></span>
+      <span class="text-12 text-secondary">所有报警与人工干预全量记录（审计要求）</span>
+    </div>
+
+    <div class="card">
+      <div class="tab-bar" style="padding:0 16px;">
+        <button class="tab active" data-pane="p1" onclick="switchTab(this)">实时报警 <span class="badge warning">1 未确认</span></button>
+        <button class="tab" data-pane="p2" onclick="switchTab(this)">操作日志</button>
+        <button class="tab" data-pane="p3" onclick="switchTab(this)">错误码统计</button>
+      </div>
+
+      <!-- Pane 1: 实时报警 -->
+      <div class="pane show card-body" id="p1">
+        <div class="alarm-item emergency">
+          <b>⛔ 急停</b><span class="mono">9001</span> 手动急停触发（演练）— 全部停止，等待故障复位
+          <button class="btn small danger" onclick="alert('原型演示：故障复位需二次确认 + 权限校验')">故障复位</button>
+          <span class="alarm-time">11-08 16:40:03</span>
+        </div>
+        <div class="alarm-item warning">
+          <b>⚠ 警告</b><span class="mono">5001</span> 控制样 CTL-002 偏差 +2.4σ，接近控制限（±2σ）· 任务 #10079
+          <button class="btn small" onclick="ack(this)">确认</button>
+          <button class="btn small" onclick="mute(this)">静音</button>
+          <span class="alarm-time">10:18:55</span>
+        </div>
+        <div class="alarm-item fault">
+          <b>✖ 故障</b><span class="mono">1001</span> 机器人抓取失败（样品未检测到 1002 → 重试成功）· 任务 #10071
+          <button class="btn small" onclick="ack(this)">确认</button>
+          <span class="alarm-time">09:47:21</span>
+        </div>
+        <div class="alarm-item fault">
+          <b>✖ 故障</b><span class="mono">2001</span> 激发台下压力控异常（检查力控参数）· 任务 #10064
+          <button class="btn small" onclick="ack(this)">确认</button>
+          <span class="alarm-time">09:12:40</span>
+        </div>
+        <div class="alarm-item info">
+          <b>ℹ 提示</b><span class="mono">4001</span> PLC 心跳瞬时延迟 2.1s（自动恢复）
+          <span class="alarm-time">08:55:12</span>
+        </div>
+      </div>
+
+      <!-- Pane 2: 操作日志 -->
+      <div class="pane card-body" id="p2">
+        <div class="row filter-row" style="margin-bottom:12px; align-items:center; gap:8px;">
+          <input type="date" value="2026-11-09">
+          <select><option>全部类型</option><option>标准化</option><option>控制检查</option><option>测高</option><option>生产分析</option><option>人工干预</option></select>
+          <select><option>全部样品</option><option class="mono">SUS-002</option><option class="mono">CTL-002</option></select>
+          <button class="btn small primary">查询</button>
+          <span class="spacer grow"></span>
+          <span class="text-12 text-secondary">记录字段：动作起止时间 / 触发原因 / 前后值 / 操作者（审计用）</span>
+        </div>
+        <table class="grid">
+          <thead><tr>
+            <th>时间</th><th>动作</th><th>对象</th><th>上下文</th><th>开始→结束</th><th>结果</th><th>操作者</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="mono">10:31:42</td><td>生产分析</td><td class="mono">P-20261109-07</td><td>任务 #10086 · Auto</td><td class="mono">10:31:42 → 进行中</td><td><span class="badge running">● 激发中</span></td><td>系统自动</td></tr>
+            <tr><td class="mono">10:29:03</td><td>归档</td><td class="mono">P-20261109-06</td><td>标签打印 → 归档盒 A-12</td><td class="mono">10:28:11 → 10:29:03</td><td><span class="badge running">✓ 完成</span></td><td>系统自动</td></tr>
+            <tr><td class="mono">10:18:55</td><td>控制检查</td><td class="mono">CTL-002</td><td>偏差 +2.4σ（超差预警）</td><td class="mono">10:17:02 → 10:18:55</td><td><span class="badge warning">▲ 未超限</span></td><td>系统自动</td></tr>
+            <tr><td class="mono">09:47:21</td><td>人工干预</td><td>机器人</td><td>抓取失败重试（任务 #10071）</td><td class="mono">09:46:50 → 09:47:21</td><td><span class="badge running">✓ 恢复</span></td><td>张工</td></tr>
+            <tr><td class="mono">08:02:11</td><td>标准化</td><td class="mono">SUS-002</td><td>系数 Si v22→v23</td><td class="mono">07:55:30 → 08:02:11</td><td><span class="badge running">✓ 成功</span></td><td>系统自动</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pane 3: 错误码统计 -->
+      <div class="pane card-body" id="p3">
+        <div class="text-12 text-secondary" style="margin-bottom:10px;">近 7 天按错误码段统计（持续改进闭环：重复 ≥2 次的错误须升级为规则/checklist 条目）</div>
+        <div class="row" style="margin-bottom:12px;">
+          <section class="card grow"><div class="card-body" style="text-align:center;">
+            <div class="kpi" style="color:var(--color-status-failed);font-size:24px;">3</div><div class="kpi-label">1xxx 机器人/物料</div>
+          </div></section>
+          <section class="card grow"><div class="card-body" style="text-align:center;">
+            <div class="kpi" style="color:var(--color-status-failed);font-size:24px;">1</div><div class="kpi-label">2xxx 激发台/下压</div>
+          </div></section>
+          <section class="card grow"><div class="card-body" style="text-align:center;">
+            <div class="kpi" style="color:var(--color-status-emergency);font-size:24px;">1</div><div class="kpi-label">3xxx 安全 / 9xxx 急停</div>
+          </div></section>
+          <section class="card grow"><div class="card-body" style="text-align:center;">
+            <div class="kpi" style="color:var(--color-status-warning);font-size:24px;">2</div><div class="kpi-label">4xxx 通信</div>
+          </div></section>
+          <section class="card grow"><div class="card-body" style="text-align:center;">
+            <div class="kpi" style="color:var(--color-status-warning);font-size:24px;">4</div><div class="kpi-label">5xxx 数据/业务</div>
+          </div></section>
+        </div>
+        <table class="grid">
+          <thead><tr><th>错误码</th><th>含义</th><th>次数</th><th>最近发生</th><th>处置状态</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">5001</td><td>样品厚度低于阈值 / 逼近控制限</td><td>4</td><td class="mono">10:18:55</td><td><span class="badge warning">▲ 已升级为监控规则</span></td></tr>
+            <tr><td class="mono">1001</td><td>机器人抓取失败</td><td>3</td><td class="mono">09:47:21</td><td><span class="badge warning">▲ 已加入审查 checklist</span></td></tr>
+            <tr><td class="mono">4001</td><td>PLC 心跳超时（瞬时）</td><td>2</td><td class="mono">08:55:12</td><td><span class="badge idle">观察中</span></td></tr>
+            <tr><td class="mono">2001</td><td>激发台下压异常</td><td>1</td><td class="mono">09:12:40</td><td><span class="badge running">✓ 已处置（力控参数调整）</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('show'));
+  document.getElementById(tab.dataset.pane).classList.add('show');
+}
+function ack(btn) { btn.textContent = '已确认'; btn.disabled = true; }
+function mute(btn) { btn.textContent = '已静音'; btn.disabled = true; }
+</script>
+</body>
+</html>

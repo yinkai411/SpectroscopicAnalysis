@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SpectroscopicAnalysis · 界面原型导航</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .hero { max-width: 1200px; margin: 48px auto; padding: 0 16px; }
+  .hero h1 { font-size: 28px; font-weight: 600; }
+  .hero p.desc { color: var(--color-text-secondary); margin: 8px 0 32px; line-height: 1.8; }
+  .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .entry {
+    display: block; text-decoration: none;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+    transition: box-shadow .15s;
+  }
+  .entry:hover { box-shadow: 0 4px 16px rgba(37,99,235,0.15); }
+  .entry .name { font-size: 16px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 6px; }
+  .entry .name .no { color: var(--color-primary); margin-right: 8px; }
+  .entry .desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+  .meta { margin-top: 32px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.8; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>SpectroscopicAnalysis 上位机 · 界面原型</h1>
+    <p class="desc">
+      依据 <b>docs/界面设计规范.md</b> 制作的高保真静态原型（浅色简洁风 + HandyControl 语义），
+      设计基准 <b>1920×1080</b>，色板/字号/布局与规范一一对应，作为 WPF 开发的像素级参照。<br>
+      点击下方卡片进入各页面；页面内可体验：系统模式二次确认、急停确认、报警分级展示等交互规则。
+    </p>
+
+    <div class="entries">
+      <a class="entry" href="dashboard.html">
+        <div class="name"><span class="no">01</span>主控台 · 生产监控</div>
+        <div class="desc">系统模式切换、设备状态灯、当前任务步骤进度、任务队列、底部四级报警面板。</div>
+      </a>
+      <a class="entry" href="samples.html">
+        <div class="name"><span class="no">02</span>样品档案</div>
+        <div class="desc">SCT 样品（设置样/控制样/类型标样）与生产样品台账：厚度、使用次数、状态、测高记录。</div>
+      </a>
+      <a class="entry" href="sct.html">
+        <div class="name"><span class="no">03</span>SCT 管理</div>
+        <div class="desc">标样库三分组、SCT 子状态进度、标准化/控制检查记录、策略参数（插入数量/间隔/控制限）。</div>
+      </a>
+      <a class="entry" href="coefficients.html">
+        <div class="name"><span class="no">04</span>系数管理</div>
+        <div class="desc">当前有效系数（斜率/截距/版本）、系数变更历史（前后对比）、干扰系数矩阵 k<sub>ij</sub>。</div>
+      </a>
+      <a class="entry" href="alarms.html">
+        <div class="name"><span class="no">05</span>日志报警</div>
+        <div class="desc">四级报警列表（确认/静音）、操作日志查询、错误码分段统计。</div>
+      </a>
+      <a class="entry" href="settings.html">
+        <div class="name"><span class="no">06</span>设置</div>
+        <div class="desc">通信配置（PLC/GNR）、SCT 策略参数、用户管理、主题色板预览。</div>
+      </a>
+    </div>
+
+    <div class="meta">
+      域内模拟数据约定：设置样 SUS-001~003 · 控制样 CTL-001~004 · 类型标样 TS-6061-01 · 生产样 P-2026xxxx · 任务号 #10086 ·
+      错误码分段 1xxx 机器人/物料 · 2xxx 激发台 · 3xxx 安全 · 4xxx 通信 · 5xxx 数据业务 · 9xxx 系统（见开发规范 11.1）。
+    </div>
+  </div>
+</body>
+</html>

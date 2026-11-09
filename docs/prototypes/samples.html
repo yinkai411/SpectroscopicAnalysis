@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>样品档案 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+  <span class="badge running">● 自动 · Auto</span>
+  <span class="spacer"></span>
+  <span class="comm-indicator"><span class="dot running"></span>PLC</span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="alert('原型演示：触发急停（需二次确认）')">急停</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html">主控台 · 生产监控</a>
+      <a href="samples.html" class="active">样品档案</a>
+      <a href="sct.html">SCT 管理</a>
+      <a href="coefficients.html">系数管理</a>
+      <a href="alarms.html">日志报警</a>
+      <a href="settings.html">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">样品档案</span>
+      <span class="spacer grow"></span>
+      <button class="btn ghost small">＋ 录入新标样（入库初始化）</button>
+    </div>
+
+    <!-- 类型筛选 -->
+    <div class="tag-filter" id="filter">
+      <button class="tf active">全部 (14)</button>
+      <button class="tf">设置样 (3)</button>
+      <button class="tf">控制样 (4)</button>
+      <button class="tf">类型标准化样 (2)</button>
+      <button class="tf">生产样品 (5)</button>
+    </div>
+
+    <div class="row">
+      <!-- 样品台账 -->
+      <section class="card grow">
+        <div class="card-title">SCT 样品台账
+          <span class="text-12 text-secondary">UsageCount ≥ MaxUsageCount 时自动标记「需测高」；厚度 &lt; 最小厚度自动「禁用」并报警更换</span>
+        </div>
+        <table class="grid">
+          <thead><tr>
+            <th>SampleID</th><th>类型</th><th>合金</th><th>架位</th><th>当前/初始厚度 (mm)</th><th>最小厚度</th><th>使用次数</th><th>状态</th><th>上次测高</th>
+          </tr></thead>
+          <tbody>
+            <tr onclick="showDetail('SUS-001')" style="cursor:pointer;">
+              <td class="mono">SUS-001</td><td>设置样</td><td>—</td><td class="mono">A01</td><td class="mono">9.8 / 12.0</td><td class="mono">8.0</td><td class="mono">50/50</td>
+              <td><span class="badge warning">▲ 需测高</span></td><td class="mono">11-07 08:00</td>
+            </tr>
+            <tr onclick="showDetail('SUS-002')" style="cursor:pointer;">
+              <td class="mono">SUS-002</td><td>设置样</td><td>—</td><td class="mono">A02</td><td class="mono">11.4 / 11.5</td><td class="mono">8.0</td><td class="mono">18/50</td>
+              <td><span class="badge running">● 正常</span></td><td class="mono">11-08 08:00</td>
+            </tr>
+            <tr onclick="showDetail('SUS-003')" style="cursor:pointer;">
+              <td class="mono">SUS-003</td><td>设置样</td><td>—</td><td class="mono">A03</td><td class="mono">7.2 / 10.0</td><td class="mono">8.0</td><td class="mono">33/50</td>
+              <td><span class="badge failed">✖ 禁用（过薄）</span></td><td class="mono">11-05 14:20</td>
+            </tr>
+            <tr onclick="showDetail('CTL-001')" style="cursor:pointer;">
+              <td class="mono">CTL-001</td><td>控制样（低）</td><td>1xxx</td><td class="mono">B01</td><td class="mono">16.9 / 17.0</td><td class="mono">6.0</td><td class="mono">22/60</td>
+              <td><span class="badge running">● 正常</span></td><td class="mono">11-06 08:00</td>
+            </tr>
+            <tr onclick="showDetail('CTL-002')" style="cursor:pointer;">
+              <td class="mono">CTL-002</td><td>控制样（中）</td><td>6xxx</td><td class="mono">B02</td><td class="mono">18.6 / 19.0</td><td class="mono">6.0</td><td class="mono">41/60</td>
+              <td><span class="badge warning">▲ 超差预警</span></td><td class="mono">11-08 08:00</td>
+            </tr>
+            <tr onclick="showDetail('CTL-003')" style="cursor:pointer;">
+              <td class="mono">CTL-003</td><td>控制样（高）</td><td>5xxx</td><td class="mono">B03</td><td class="mono">17.8 / 18.0</td><td class="mono">6.0</td><td class="mono">09/60</td>
+              <td><span class="badge running">● 正常</span></td><td class="mono">11-08 08:00</td>
+            </tr>
+            <tr onclick="showDetail('TS-6061-01')" style="cursor:pointer;">
+              <td class="mono">TS-6061-01</td><td>类型标准化样</td><td>6061</td><td class="mono">C01</td><td class="mono">15.2 / 16.0</td><td class="mono">7.0</td><td class="mono">12/40</td>
+              <td><span class="badge running">● 正常</span></td><td class="mono">11-01 09:30</td>
+            </tr>
+            <tr onclick="showDetail('TS-1050-01')" style="cursor:pointer;">
+              <td class="mono">TS-1050-01</td><td>类型标准化样</td><td>1050</td><td class="mono">C02</td><td class="mono">14.7 / 15.0</td><td class="mono">7.0</td><td class="mono">28/40</td>
+              <td><span class="badge running">● 正常</span></td><td class="mono">10-30 16:00</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 详情卡片 -->
+      <section class="card" style="width:320px; align-self:flex-start;">
+        <div class="card-title" id="detailTitle">样品详情：SUS-001</div>
+        <div class="card-body">
+          <div class="row" style="margin-bottom:12px;">
+            <span class="badge warning">▲ 需测高</span>
+            <span class="badge info">CRM 有证</span>
+            <span class="badge idle">启用</span>
+          </div>
+          <table class="grid">
+            <tbody>
+              <tr><td class="text-secondary">关联合金</td><td class="mono">—</td></tr>
+              <tr><td class="text-secondary">关联方法</td><td class="mono">STD-AL-Drift</td></tr>
+              <tr><td class="text-secondary">初始厚度</td><td class="mono">12.0 mm</td></tr>
+              <tr><td class="text-secondary">当前厚度</td><td class="mono" style="color:var(--color-status-warning)">9.8 mm</td></tr>
+              <tr><td class="text-secondary">测高策略</td><td>每 50 次激发</td></tr>
+              <tr><td class="text-secondary">上次使用</td><td class="mono">11-09 09:40</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:12px;color:var(--color-text-secondary);margin:12px 0 6px;">标准值（CertifiedValues）</div>
+          <table class="grid">
+            <thead><tr><th>元素</th><th>标准值 %</th><th>不确定度</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">Si</td><td class="mono">0.0812</td><td class="mono">0.0008</td></tr>
+              <tr><td class="mono">Fe</td><td class="mono">0.2045</td><td class="mono">0.0015</td></tr>
+              <tr><td class="mono">Cu</td><td class="mono">0.0018</td><td class="mono">0.0002</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:12px;color:var(--color-text-secondary);margin:12px 0 6px;">轨迹日志（最近）</div>
+          <div class="text-12 text-secondary" style="line-height:1.9;">
+            11-09 09:40 标准化使用 · UsageCount 49→50 · 触发 NeedMeasure<br>
+            11-07 08:00 测高 9.8mm（≥8.0 合格）· Status→Normal<br>
+            11-05 10:12 标准化使用 · 系数 v23 更新
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 生产样品 -->
+    <section class="card">
+      <div class="card-title">生产样品（今日）</div>
+      <table class="grid">
+        <thead><tr>
+          <th>SampleID</th><th>合金</th><th>状态</th><th>分析结果（校正后）</th><th>原始强度</th><th>判定</th><th>归档位</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="mono">P-20261109-06</td><td>6061</td><td><span class="badge running">● 已完成</span></td><td class="mono">Si 0.82 / Fe 0.21 / Mg 0.94</td><td class="mono text-secondary">I=45210…</td><td><span class="badge running">✓ 合格</span></td><td class="mono">A-12</td></tr>
+          <tr><td class="mono">P-20261109-05</td><td>1050</td><td><span class="badge running">● 已完成</span></td><td class="mono">Si 0.11 / Fe 0.38 / Cu 0.002</td><td class="mono text-secondary">I=38777…</td><td><span class="badge running">✓ 合格</span></td><td class="mono">A-11</td></tr>
+          <tr><td class="mono">P-20261109-04</td><td>3003</td><td><span class="badge failed">✖ 超差复测</span></td><td class="mono">Mn 1.82（限 ≤1.50）</td><td class="mono text-secondary">I=51204…</td><td><span class="badge failed">✖ 不合格</span></td><td class="mono">隔离区</td></tr>
+          <tr><td class="mono">P-20261109-07</td><td>6061</td><td><span class="badge running">● 激发中</span></td><td class="text-secondary">—</td><td class="text-secondary">—</td><td class="text-secondary">—</td><td class="text-secondary">—</td></tr>
+        </tbody>
+      </table>
+      <div class="card-body text-12 text-secondary" style="padding-top:8px;">所有样品均同时保存原始强度与校正后数据（数据规范硬性要求）；点击行查看完整报告。</div>
+    </section>
+  </main>
+</div>
+
+<script>
+// 筛选演示
+document.querySelectorAll('#filter .tf').forEach(t => t.onclick = () => {
+  document.querySelectorAll('#filter .tf').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+});
+// 详情切换演示
+function showDetail(id) {
+  document.getElementById('detailTitle').textContent = '样品详情：' + id;
+}
+</script>
+</body>
+</html>

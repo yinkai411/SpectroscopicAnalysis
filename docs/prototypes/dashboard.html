@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>主控台 · 生产监控 — SpectroscopicAnalysis</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<!-- ======================= 顶栏 ======================= -->
+<header class="topbar">
+  <span class="brand">SpectroscopicAnalysis 上位机</span>
+
+  <div class="mode-switch" id="modeSwitch">
+    <button class="mode-btn active" data-mode="Auto" onclick="switchMode(this)">自动</button>
+    <button class="mode-btn" data-mode="Manual" onclick="switchMode(this)">手动</button>
+    <button class="mode-btn" data-mode="Maintenance" onclick="switchMode(this)">维护</button>
+  </div>
+
+  <span class="comm-indicator"><span class="dot running"></span>PLC 心跳正常</span>
+  <span class="comm-indicator"><span class="dot running"></span>GNR 已连接</span>
+
+  <span class="spacer"></span>
+  <span class="clock mono">2026-11-09 10:32:18</span>
+  <span class="user">操作员：张工</span>
+  <button class="estop-btn" onclick="showModal('estopModal')">急停</button>
+</header>
+
+<!-- ======================= 主体 ======================= -->
+<div class="layout">
+
+  <!-- 左栏：导航 + 设备状态固定区 -->
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="dashboard.html" class="active">主控台 · 生产监控</a>
+      <a href="samples.html">样品档案</a>
+      <a href="sct.html">SCT 管理</a>
+      <a href="coefficients.html">系数管理</a>
+      <a href="alarms.html">日志报警</a>
+      <a href="settings.html">设置</a>
+    </nav>
+    <div class="device-panel">
+      <h4>设备状态（常驻）</h4>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SafetyOK</span><span class="text-12 text-secondary">安全正常</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>RobotReady</span><span class="text-12 text-secondary">就绪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>SparkStandReady</span><span class="text-12 text-secondary">就绪</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot running"></span>GNR 光谱仪</span><span class="text-12 text-secondary">在线</span></div>
+      <div class="device-row"><span class="comm-indicator"><span class="dot idle"></span>铣床（未接入）</span><span class="text-12 text-secondary">人工上样</span></div>
+    </div>
+  </aside>
+
+  <!-- 内容区 -->
+  <main class="content">
+    <div class="row" style="align-items:center;">
+      <span class="page-title">生产监控</span>
+      <span class="badge running">● 系统运行中 · Auto</span>
+      <span class="spacer grow"></span>
+      <span class="text-12 text-secondary">当前方法：AL-6061 常规分析</span>
+    </div>
+
+    <!-- 当前任务卡 -->
+    <section class="card">
+      <div class="card-title">当前任务 #10086
+        <span class="badge running">● 激发中</span>
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin-bottom:8px;">
+          <span class="text-secondary text-12">样品 <b class="mono" style="color:var(--color-text-primary)">P-20261109-07</b></span>
+          <span class="text-secondary text-12">类型：生产样品 · 合金 6061</span>
+          <span class="text-secondary text-12">抓取高度 12.5 mm</span>
+          <span class="spacer grow"></span>
+          <span class="text-secondary text-12">开始 10:31:42 · 已用时 00:00:36</span>
+        </div>
+        <!-- 任务状态 StepBar：抓取→铣削→放置→激发→完成 -->
+        <div class="stepbar">
+          <div class="step done"><div class="node">✓</div><div class="label">抓取</div></div>
+          <div class="connector done"></div>
+          <div class="step done"><div class="node">✓</div><div class="label">铣削（人工跳过）</div></div>
+          <div class="connector done"></div>
+          <div class="step current"><div class="node">4</div><div class="label">放置/激发</div></div>
+          <div class="connector"></div>
+          <div class="step"><div class="node">5</div><div class="label">完成/归档</div></div>
+        </div>
+        <div class="text-12 text-secondary">激发台力控下压完成，GNR CYCLE_START 已发送（ID_CYCLE=1），等待 RESULT_REQUEST…</div>
+      </div>
+    </section>
+
+    <!-- KPI -->
+    <div class="row">
+      <section class="card grow"><div class="card-body" style="text-align:center;">
+        <div class="kpi" style="color:var(--color-status-running)">128</div>
+        <div class="kpi-label">今日已完成</div>
+      </div></section>
+      <section class="card grow"><div class="card-body" style="text-align:center;">
+        <div class="kpi" style="color:var(--color-text-primary)">6</div>
+        <div class="kpi-label">队列待分析</div>
+      </div></section>
+      <section class="card grow"><div class="card-body" style="text-align:center;">
+        <div class="kpi" style="color:var(--color-status-warning)">1</div>
+        <div class="kpi-label">未确认报警</div>
+      </div></section>
+      <section class="card grow"><div class="card-body" style="text-align:center;">
+        <div class="kpi" style="color:var(--color-primary)">17 / 20</div>
+        <div class="kpi-label">本批产量（下个控制样插入倒计时）</div>
+      </div></section>
+    </div>
+
+    <!-- 任务队列 -->
+    <section class="card grow">
+      <div class="card-title">任务队列 <span class="text-12 text-secondary">先到先分析；SCT 任务自动插队（优先级见开发规范）</span></div>
+      <table class="grid">
+        <thead><tr>
+          <th>#</th><th>SampleID</th><th>类型</th><th>合金</th><th>状态</th><th>厚度 (mm)</th><th>使用次数</th><th>当前步骤</th><th>优先级</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="mono">10086</td><td class="mono">P-20261109-07</td><td>生产样品</td><td>6061</td><td><span class="badge running">● 激发中</span></td><td>12.5</td><td>—</td><td>放置/激发</td><td>5 常规</td></tr>
+          <tr><td class="mono">10087</td><td class="mono">P-20261109-08</td><td>生产样品</td><td>1050</td><td><span class="badge idle">○ 等待</span></td><td>14.0</td><td>—</td><td>—</td><td>5 常规</td></tr>
+          <tr><td class="mono">10088</td><td class="mono">P-20261109-09</td><td>生产样品</td><td>3003</td><td><span class="badge idle">○ 等待</span></td><td>13.2</td><td>—</td><td>—</td><td>5 常规</td></tr>
+          <tr><td class="mono">10089</td><td class="mono">CTL-002</td><td>控制样</td><td>—</td><td><span class="badge info">◆ 定时插入</span></td><td>18.6</td><td>41/60</td><td>—</td><td>3 高</td></tr>
+          <tr><td class="mono">10090</td><td class="mono">SUS-001</td><td>设置样</td><td>—</td><td><span class="badge warning">▲ 需测高</span></td><td>9.8 / ≥8.0</td><td>50/50</td><td>—</td><td>2 超差触发</td></tr>
+          <tr><td class="mono">10091</td><td class="mono">P-20261109-10</td><td>生产样品</td><td>6063</td><td><span class="badge idle">○ 等待</span></td><td>15.1</td><td>—</td><td>—</td><td>6 归档</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 报警面板（规范 7：四级） -->
+    <section class="card">
+      <div class="card-title">报警面板 <span class="text-12 text-secondary">未确认 1 条 · 详细列表见「日志报警」</span></div>
+      <div class="card-body" style="padding-top:12px;">
+        <div class="alarm-item warning">
+          <b>⚠ 警告</b><span class="mono">5001</span> 控制样 CTL-002 上次偏差 +2.4σ，接近控制限（±2σ），建议关注
+          <button class="btn small" onclick="confirmAlarm(this)">确认</button>
+          <span class="alarm-time">10:18:55</span>
+        </div>
+        <div class="alarm-item info">
+          <b>ℹ 提示</b> 任务 #10085 归档完成（标签 P-20261109-06 → 归档盒 A-12）
+          <span class="alarm-time">10:29:03</span>
+        </div>
+        <div class="alarm-item fault" style="opacity:.55;">
+          <b>✖ 故障</b><span class="mono">1001</span> 机器人抓取失败（重试 1 次后成功）· 已确认
+          <span class="alarm-time">09:47:21</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ 弹窗：模式切换二次确认（规范 8/11） ============ -->
+<div class="modal-mask" id="modeModal">
+  <div class="modal">
+    <div class="modal-title">切换系统模式确认</div>
+    <div class="modal-body" id="modeModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('modeModal')">取消</button>
+      <button class="btn primary" onclick="applyMode()">确认切换</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 弹窗：急停二次确认 ============ -->
+<div class="modal-mask" id="estopModal">
+  <div class="modal">
+    <div class="modal-title" style="color:var(--color-status-emergency)">⛔ 触发急停</div>
+    <div class="modal-body">
+      急停将立即停止<b>所有设备动作</b>（机器人/激发台/输送），系统进入 Emergency 模式。<br><br>
+      急停后必须执行<b>故障复位</b>并二次确认才能恢复自动运行。
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('estopModal')">取消</button>
+      <button class="btn danger" onclick="estop()">确认急停</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- 模式切换：二次确认演示（规范 11：说明后果） ----
+let pendingMode = null;
+function switchMode(btn) {
+  const mode = btn.dataset.mode;
+  if (btn.classList.contains('active')) return;
+  pendingMode = mode;
+  const name = { Auto: '自动（Auto）', Manual: '手动（Manual）', Maintenance: '维护（Maintenance）' }[mode];
+  document.getElementById('modeModalBody').innerHTML =
+    '即将切换到 <b>' + name + '</b>。切换前将执行：<br>' +
+    '① 与 PLC 双方确认（心跳正常）；<br>' +
+    '② 样品位置与软件记录一致性校验（不一致将拒绝切换）；<br>' +
+    '③ SafetyOK / RobotReady / SparkStandReady 预检。';
+  document.getElementById('modeModal').classList.add('show');
+}
+function applyMode() {
+  document.querySelectorAll('#modeSwitch .mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('#modeSwitch .mode-btn[data-mode="' + pendingMode + '"]').classList.add('active');
+  document.getElementById('modeModal').classList.remove('show');
+}
+// ---- 急停演示 ----
+function estop() {
+  hideModal('estopModal');
+  document.querySelectorAll('#modeSwitch .mode-btn').forEach(b => { b.classList.remove('active'); b.disabled = true; });
+  const e = document.createElement('button');
+  e.className = 'mode-btn active emergency'; e.textContent = '⛔ Emergency';
+  document.getElementById('modeSwitch').appendChild(e);
+  document.querySelector('.badge.running')?.replaceWith(Object.assign(document.createElement('span'), { className: 'badge emergency', textContent: '⛔ 急停 · Emergency' }));
+}
+// ---- 报警确认 ----
+function confirmAlarm(btn) { btn.textContent = '已确认'; btn.disabled = true; }
+// ---- 弹窗工具 ----
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function hideModal(id) { document.getElementById(id).classList.remove('show'); }
+</script>
+</body>
+</html>

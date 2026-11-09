@@ -12,7 +12,7 @@
 
 ## 技术栈（不得擅自变更或新增依赖）
 
-.NET 8 · WPF+MVVM · HandyControl（UI 组件库，已登记）· LiveCharts2（图表库，已登记）· NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记；UI 美化类插件（图表/图标/动画等）登记后可直接引入。
+.NET 8 · WPF+MVVM（严格分层，见硬性规则 1）· CommunityToolkit.Mvvm（MVVM 基础设施，已登记）· HandyControl（UI 组件库，已登记）· LiveCharts2（图表库，已登记）· NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记；UI 美化类插件（图表/图标/动画等）登记后可直接引入。
 
 ## 目录约定
 
@@ -22,7 +22,7 @@
 
 ## 硬性规则
 
-1. **架构**：依赖方向 UI → Workflow → 引擎/管理器 → DeviceInterface/数据层，禁止反向与跨层直调；模块间经接口通信。
+1. **架构**：依赖方向 UI → Workflow → 引擎/管理器 → DeviceInterface/数据层，禁止反向与跨层直调；模块间经接口通信。**MVVM 严格分层（强制）**：View 与 ViewModel 职责互斥、严禁越职——code-behind 仅限 InitializeComponent 与纯视觉行为，**禁止**业务逻辑/直接调用任何模块/事件承载业务（用户操作一律 `ICommand`）；ViewModel **禁止**引用 WPF 类型（Brush/Color/Window/Control/VisualTreeHelper 等）、禁止持有控件引用与操作视觉树（跨线程经注入的 `IUiDispatcher`），**禁止**在 VM 内实现持久化或通信。细则见开发规范 3.3。
 2. **DeviceInterface 必须抽象**：Modbus TCP 为当前实现，接口设计须保证后续可替换为 OPC UA（不要把 Modbus 细节泄漏到接口之外）。
 3. **数据**：原始数据与校正后数据必须双存；系数版本化；写库用事务；审计日志完整（前后值/时间/原因/操作者）。
 4. **状态机枚举命名**必须与任务清单第 7 节一致（系统模式/任务状态/SCT 子状态/样品状态），不得自创状态名。

@@ -12,7 +12,7 @@
 
 ## 技术栈（不得擅自变更或新增依赖）
 
-.NET 8 · WPF+MVVM · NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记。
+.NET 8 · WPF+MVVM · HandyControl（UI 组件库，已登记）· NModbus（Modbus TCP）· SQLite+Repository 抽象 · xUnit · Serilog · Generic Host DI。新依赖须先在开发规范第 1 节登记。
 
 ## 目录约定
 
@@ -32,6 +32,7 @@
    - 所有设备通信调用必须带超时与重试上限（值取集中配置）。
    - 任务下发 PLC 前必须预检 SafetyOK / RobotReady / SparkStandReady。
 6. **编码**：可空引用启用；中文注释与日志；async I/O 禁止 `.Result/.Wait()`；file-scoped namespace。
-7. **安全**：密钥/连接串不入库；样品位置与软件记录不一致时不得切入自动模式。
-8. **Git**：conventional commits 中文描述；提交前 `dotnet build` 必须通过。
-9. **范围**：仅修改与当前任务相关的代码；不重构无关代码；不删除现有规则文档中的约束。
+7. **UI**：必须遵循 [docs/界面设计规范.md](docs/界面设计规范.md)——颜色/字号/样式一律引用 `Themes/` 资源字典（`Brush.*`/`Color.*` 键），禁止硬编码颜色与内联样式；ViewModel 禁止返回 Brush/Color；状态色语义固定不得挪用。
+8. **安全**：密钥/连接串不入库；样品位置与软件记录不一致时不得切入自动模式。
+9. **Git**：conventional commits 中文描述；提交前 `dotnet build` 必须通过。
+10. **范围**：仅修改与当前任务相关的代码；不重构无关代码；不删除现有规则文档中的约束。

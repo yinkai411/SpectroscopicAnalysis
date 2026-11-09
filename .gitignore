@@ -1,0 +1,60 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+bin/*/
+obj/*/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.assets.json
+project.lock.json
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+coverage*.xml
+*.coverage
+*.coveragexml
+
+# Publish output
+publish/
+!**/[Pp]ublish/
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# ZCode workspace
+.zcode/

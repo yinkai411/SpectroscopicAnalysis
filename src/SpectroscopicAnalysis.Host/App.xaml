@@ -1,14 +1,37 @@
 <Application x:Class="SpectroscopicAnalysis.Host.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SpectroscopicAnalysis.Host">
+             xmlns:vm="clr-namespace:SpectroscopicAnalysis.Host.ViewModels"
+             xmlns:views="clr-namespace:SpectroscopicAnalysis.Host.Views">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- HandyControl 主题（浅色），后续在 Themes/ 中用规范色板覆盖 -->
+                <!-- HandyControl 浅色主题 -->
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;Component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;Component/Themes/Theme.xaml" />
+                <!-- 项目主题（界面设计规范第 9 节；在 HandyControl 之后合并以覆盖其主题键） -->
+                <ResourceDictionary Source="Themes/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- VM → View 映射（MainViewModel.CurrentViewModel 经 ContentControl 渲染） -->
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                <views:DashboardPage />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SamplesViewModel}">
+                <views:SamplesPage />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SctViewModel}">
+                <views:SctPage />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CoefficientsViewModel}">
+                <views:CoefficientsPage />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AlarmsViewModel}">
+                <views:AlarmsPage />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsPage />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

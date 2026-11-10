@@ -32,6 +32,16 @@ public partial class App
                 services.AddSingleton<DbInitializer>();
                 services.AddSingleton<ISctSampleRepository, SctSampleRepository>();
                 services.AddSingleton<SeedData>();
+
+                // UI 层：调度抽象（MVVM 分层要求）+ 页面 ViewModel（单例，导航共享状态）
+                services.AddSingleton<Ui.IUiDispatcher, Ui.UiDispatcher>();
+                services.AddSingleton<ViewModels.DashboardViewModel>();
+                services.AddSingleton<ViewModels.SamplesViewModel>();
+                services.AddSingleton<ViewModels.SctViewModel>();
+                services.AddSingleton<ViewModels.CoefficientsViewModel>();
+                services.AddSingleton<ViewModels.AlarmsViewModel>();
+                services.AddSingleton<ViewModels.SettingsViewModel>();
+                services.AddSingleton<ViewModels.MainViewModel>();
                 services.AddSingleton<MainWindow>();
             })
             .UseSerilog((context, loggerConfiguration) =>
@@ -47,6 +57,19 @@ public partial class App
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // 全局异常兜底（开发规范 11.2 最小版；完整错误链随 D9 落地）——启动期先记录再终止
+        DispatcherUnhandledException += (_, ex) =>
+        {
+            Log.Fatal(ex.Exception, "UI 线程未处理异常");
+            Log.CloseAndFlush();
+        };
+        AppDomain.CurrentDomain.UnhandledException += (_, ex) =>
+        {
+            Log.Fatal(ex.ExceptionObject as Exception, "非托管/后台线程未处理异常");
+            Log.CloseAndFlush();
+        };
+
         _host.Start();
 
         // 建库 + 种子（幂等）；失败走统一错误链前先记录并让异常上抛终止启动（启动期硬失败）
@@ -56,8 +79,9 @@ public partial class App
         seeded.SeedIfEmpty();
         Log.Information("数据库就绪（建表/种子幂等完成）");
 
-        // 主窗口由 DI 提供，后续页面/ViewModel 均按此模式注册
+        // 主窗口由 DI 提供；DataContext = MainViewModel（组合根装配，View 零业务）
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = _host.Services.GetRequiredService<ViewModels.MainViewModel>();
         mainWindow.Show();
         Log.Information("上位机启动完成");
     }

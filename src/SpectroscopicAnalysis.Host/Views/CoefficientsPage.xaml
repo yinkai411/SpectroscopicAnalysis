@@ -1,0 +1,32 @@
+<UserControl x:Class="SpectroscopicAnalysis.Host.Views.CoefficientsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 系数管理骨架（对照 docs/prototypes/coefficients.html；静态占位） -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16">
+            <TextBlock Text="系数管理" Style="{StaticResource Text.PageTitle}" Margin="{DynamicResource Spacing.CardGap}" />
+
+            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
+                <StackPanel>
+                    <TextBlock Text="当前有效系数" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="方法 / 元素 / 斜率 a / 截距 b / 内标 / 版本 / 生效时间 / 来源设置样 / 状态" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                    <TextBlock Text="C = a·I + b（生产样品结果应用最新版本系数；原始与校正数据双存）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
+                <StackPanel>
+                    <TextBlock Text="变更历史" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="时间 / 元素 / 变更前（a/b）/ 变更后（a/b）/ 版本 / 原因 / 来源 / 操作者" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="干扰系数矩阵" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="Ci = ai·Ii + bi + Σ kij·Cj（迭代 2–3 次；标准化时 kij 保持不变）" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,49 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 仅引用 Colors.xaml 生成 Brush.* 键；并覆盖 HandyControl 主题键（界面规范第 8 节：主题色映射规范色板）。
+         注意：Freezable(Color) 属性必须用 StaticResource（DynamicResource 延迟求值在 Freezable 上会运行时失败） -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- 基础 -->
+    <SolidColorBrush x:Key="Brush.Bg.Page" Color="{StaticResource Color.Bg.Page}" />
+    <SolidColorBrush x:Key="Brush.Bg.Card" Color="{StaticResource Color.Bg.Card}" />
+    <SolidColorBrush x:Key="Brush.Border.Default" Color="{StaticResource Color.Border.Default}" />
+    <SolidColorBrush x:Key="Brush.Primary" Color="{StaticResource Color.Primary}" />
+    <SolidColorBrush x:Key="Brush.Primary.Hover" Color="{StaticResource Color.Primary.Hover}" />
+    <SolidColorBrush x:Key="Brush.Danger" Color="{StaticResource Color.Danger}" />
+
+    <!-- 文字 -->
+    <SolidColorBrush x:Key="Brush.Text.Primary" Color="{StaticResource Color.Text.Primary}" />
+    <SolidColorBrush x:Key="Brush.Text.Secondary" Color="{StaticResource Color.Text.Secondary}" />
+    <SolidColorBrush x:Key="Brush.Text.Disabled" Color="{StaticResource Color.Text.Disabled}" />
+
+    <!-- 状态 -->
+    <SolidColorBrush x:Key="Brush.Status.Running" Color="{StaticResource Color.Status.Running}" />
+    <SolidColorBrush x:Key="Brush.Status.Idle" Color="{StaticResource Color.Status.Idle}" />
+    <SolidColorBrush x:Key="Brush.Status.Warning" Color="{StaticResource Color.Status.Warning}" />
+    <SolidColorBrush x:Key="Brush.Status.Failed" Color="{StaticResource Color.Status.Failed}" />
+    <SolidColorBrush x:Key="Brush.Status.Emergency" Color="{StaticResource Color.Status.Emergency}" />
+    <SolidColorBrush x:Key="Brush.Status.Info" Color="{StaticResource Color.Status.Info}" />
+
+    <!-- 徽章浅底 -->
+    <SolidColorBrush x:Key="Brush.Badge.Running.Bg" Color="{StaticResource Color.Badge.Running.Bg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Idle.Bg" Color="{StaticResource Color.Badge.Idle.Bg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Warning.Bg" Color="{StaticResource Color.Badge.Warning.Bg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Warning.Fg" Color="{StaticResource Color.Badge.Warning.Fg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Failed.Bg" Color="{StaticResource Color.Badge.Failed.Bg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Failed.Fg" Color="{StaticResource Color.Badge.Failed.Fg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Info.Bg" Color="{StaticResource Color.Badge.Info.Bg}" />
+    <SolidColorBrush x:Key="Brush.Badge.Info.Fg" Color="{StaticResource Color.Badge.Info.Fg}" />
+
+    <!-- HandyControl 主题键覆盖（核心集；合并顺序保证覆盖生效） -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Color.Primary}" />
+    <SolidColorBrush x:Key="DarkPrimaryBrush" Color="{StaticResource Color.Primary.Hover}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource Color.Danger}" />
+    <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource Color.Status.Warning}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Color.Status.Running}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource Color.Status.Info}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource Color.Border.Default}" />
+    <SolidColorBrush x:Key="SecondaryTitleBrush" Color="{StaticResource Color.Text.Secondary}" />
+</ResourceDictionary>

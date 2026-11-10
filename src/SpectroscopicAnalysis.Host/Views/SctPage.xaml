@@ -1,0 +1,33 @@
+<UserControl x:Class="SpectroscopicAnalysis.Host.Views.SctPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- SCT 管理骨架（对照 docs/prototypes/sct.html；静态占位） -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16">
+            <TextBlock Text="SCT 管理" Style="{StaticResource Text.PageTitle}" Margin="{DynamicResource Spacing.CardGap}" />
+
+            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
+                <StackPanel>
+                    <TextBlock Text="SCT 子状态进度" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="Selecting → Retrieving → MeasuringHeight → Milling → Analyzing → UpdatingCoeff → Returning" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
+                    <TextBlock Text="（SCT 执行期间生产样品分析自动暂停）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
+                <StackPanel>
+                    <TextBlock Text="标样库" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="设置样（漂移校正，更新系数）· 控制样（状态监控，只判断）· 类型标准化样（按合金系列）" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="标准化 / 控制检查记录" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <TextBlock Text="时间 / 操作类型 / 样品 / 触发原因 / 结果 / 系数变更 / 偏差 / 操作者" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                    <TextBlock Text="（数据随 M2 SctStrategyEngine 接入）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

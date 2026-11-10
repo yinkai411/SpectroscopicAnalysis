@@ -58,6 +58,174 @@ public sealed partial class SamplesViewModel : ObservableObject, IPageLifecycle
     [ObservableProperty]
     private bool _isLoading;
 
+    // ==================== 样品注册（任务清单"入库初始化"） ====================
+
+    /// <summary>样品类型下拉选项（展示文本：设置样/控制样/类型标准化样/生产样品）。</summary>
+    public static readonly IReadOnlyList<string> SampleTypeOptions = new[]
+    {
+        "设置样", "控制样", "类型标准化样", "生产样品",
+    };
+
+    [ObservableProperty]
+    private bool _isRegisterOpen;
+
+    [ObservableProperty]
+    private string _regSampleId = string.Empty;
+
+    [ObservableProperty]
+    private string _regSampleName = string.Empty;
+
+    [ObservableProperty]
+    private string _regSampleType = SampleTypeOptions[0];
+
+    [ObservableProperty]
+    private string? _regAlloyType;
+
+    [ObservableProperty]
+    private string? _regRackPosition;
+
+    [ObservableProperty]
+    private string _regInitialThickness = string.Empty;
+
+    [ObservableProperty]
+    private string _regMinThickness = string.Empty;
+
+    [ObservableProperty]
+    private string _regMaxUsageCount = string.Empty;
+
+    /// <summary>注册校验错误提示（空即无错误）。</summary>
+    [ObservableProperty]
+    private string? _registerError;
+
+    /// <summary>注册提交中标记（防重复提交）。</summary>
+    [ObservableProperty]
+    private bool _isRegistering;
+
+    /// <summary>切换注册表单显隐。</summary>
+    [RelayCommand]
+    private void ToggleRegister() => IsRegisterOpen = !IsRegisterOpen;
+
+    /// <summary>取消注册：清空表单与错误并关闭面板。</summary>
+    [RelayCommand]
+    private void CancelRegister()
+    {
+        ClearRegisterForm();
+        IsRegisterOpen = false;
+    }
+
+    /// <summary>提交注册：校验 → 入库初始化（CurrentThickness=Initial、UsageCount=0、Status=Normal）→ 刷新。</summary>
+    [RelayCommand]
+    private async Task RegisterAsync()
+    {
+        if (IsRegistering)
+        {
+            return;
+        }
+
+        var error = ValidateRegisterForm();
+        if (error is not null)
+        {
+            RegisterError = error;
+            return;
+        }
+
+        var sample = BuildSampleFromForm();
+        IsRegistering = true;
+        RegisterError = null;
+        try
+        {
+            var duplicate = await Task.Run(() => _samples.GetById(sample.SampleId) is not null);
+            if (duplicate)
+            {
+                RegisterError = $"样品编号已存在：{sample.SampleId}";
+                return;
+            }
+
+            await Task.Run(() => _samples.Insert(sample));
+            _ui.Invoke(() =>
+            {
+                ClearRegisterForm();
+                IsRegisterOpen = false;
+            });
+            // 入库后刷新列表（LoadAsync 内部有 IsLoading 防抖，此处直接复用）
+            LoadCommand.Execute(null);
+        }
+        finally
+        {
+            _ui.Invoke(() => IsRegistering = false);
+        }
+    }
+
+    /// <summary>表单校验；返回错误消息，null 表示通过。</summary>
+    private string? ValidateRegisterForm()
+    {
+        if (string.IsNullOrWhiteSpace(RegSampleId))
+        {
+            return "样品编号不能为空";
+        }
+        if (string.IsNullOrWhiteSpace(RegSampleName))
+        {
+            return "样品名称不能为空";
+        }
+        if (string.IsNullOrWhiteSpace(RegRackPosition))
+        {
+            return "样品架位置不能为空";
+        }
+        if (!double.TryParse(RegInitialThickness, out var init) || init <= 0)
+        {
+            return "初始厚度必须为大于 0 的数值";
+        }
+        if (!double.TryParse(RegMinThickness, out var min) || min <= 0)
+        {
+            return "最小厚度必须为大于 0 的数值";
+        }
+        if (!int.TryParse(RegMaxUsageCount, out var maxUsage) || maxUsage < 1)
+        {
+            return "最大使用次数必须为不小于 1 的整数";
+        }
+        return null;
+    }
+
+    private SctSample BuildSampleFromForm() => new()
+    {
+        SampleId = RegSampleId.Trim(),
+        SampleName = RegSampleName.Trim(),
+        SampleType = TypeDisplayToKey(RegSampleType),
+        AlloyType = string.IsNullOrWhiteSpace(RegAlloyType) ? null : RegAlloyType.Trim(),
+        RackPosition = RegRackPosition?.Trim(), // 校验已确保非空
+        InitialThickness = double.Parse(RegInitialThickness),
+        CurrentThickness = double.Parse(RegInitialThickness), // 入库初始化：当前厚度 = 初始厚度
+        MinThickness = double.Parse(RegMinThickness),
+        UsageCount = 0,
+        MaxUsageCount = int.Parse(RegMaxUsageCount),
+        Status = SampleStatus.Normal,
+        IsActive = true,
+        CreatedTime = DateTime.Now,
+    };
+
+    private void ClearRegisterForm()
+    {
+        RegSampleId = string.Empty;
+        RegSampleName = string.Empty;
+        RegSampleType = SampleTypeOptions[0];
+        RegAlloyType = null;
+        RegRackPosition = null;
+        RegInitialThickness = string.Empty;
+        RegMinThickness = string.Empty;
+        RegMaxUsageCount = string.Empty;
+        RegisterError = null;
+    }
+
+    /// <summary>展示文本 → 类型键（与 SampleRowItem 映射一致）。</summary>
+    private static string TypeDisplayToKey(string display) => display switch
+    {
+        "设置样" => SampleType.SettingUp,
+        "控制样" => SampleType.Control,
+        "类型标准化样" => SampleType.TypeStd,
+        "生产样品" => SampleType.Production,
+        _ => display,
+    };
+
     public SamplesViewModel(ISctSampleRepository samples, IUiDispatcher ui)
     {
         _samples = samples;

@@ -5,7 +5,72 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="16">
 
-            <TextBlock Text="样品档案" Style="{StaticResource Text.PageTitle}" Margin="{DynamicResource Spacing.CardGap}" />
+            <DockPanel Margin="{DynamicResource Spacing.CardGap}">
+                <TextBlock Text="样品档案" Style="{StaticResource Text.PageTitle}" VerticalAlignment="Center" />
+                <Button Content="＋ 录入新标样" Command="{Binding ToggleRegisterCommand}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Background="{DynamicResource Brush.Primary}" Foreground="White"
+                        FontSize="{DynamicResource FontSize.Caption}" Padding="10,5" Cursor="Hand" />
+            </DockPanel>
+
+            <!-- 样品注册表单（入库初始化：当前厚度=初始厚度、使用次数=0、状态=Normal） -->
+            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}"
+                    Visibility="{Binding IsRegisterOpen, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="录入新标样" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,12" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="样品编号*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RegSampleId, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="样品名称*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="0" Grid.Column="4" Text="{Binding RegSampleName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="样品类型*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SampleTypeOptions}" SelectedItem="{Binding RegSampleType}" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="合金类型" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding RegAlloyType, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="样品架位置*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RegRackPosition, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="最大使用次数*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding RegMaxUsageCount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="初始厚度 (mm)*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding RegInitialThickness, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="最小厚度 (mm)*" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding RegMinThickness, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                    </Grid>
+
+                    <TextBlock Text="{Binding RegisterError}" TextWrapping="Wrap" Margin="0,4,0,8"
+                               Foreground="{DynamicResource Brush.Status.Failed}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RegisterError}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="取消" Command="{Binding CancelRegisterCommand}" Margin="0,0,8,0" />
+                        <Button Content="确认入库" Command="{Binding RegisterCommand}"
+                                Background="{DynamicResource Brush.Primary}" Foreground="White"
+                                FontSize="{DynamicResource FontSize.Caption}" Padding="14,6" Cursor="Hand" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- 类型筛选 -->
             <StackPanel Orientation="Horizontal" Margin="{DynamicResource Spacing.CardGap}">

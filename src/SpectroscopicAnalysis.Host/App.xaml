@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:SpectroscopicAnalysis.Host.ViewModels"
-             xmlns:views="clr-namespace:SpectroscopicAnalysis.Host.Views">
+             xmlns:views="clr-namespace:SpectroscopicAnalysis.Host.Views"
+             xmlns:converters="clr-namespace:SpectroscopicAnalysis.Host.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -12,6 +13,10 @@
                 <!-- 项目主题（界面设计规范第 9 节；在 HandyControl 之后合并以覆盖其主题键） -->
                 <ResourceDictionary Source="Themes/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- 转换器（字典主体项） -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibility.Inverse" Inverse="True" />
 
             <!-- VM → View 映射（MainViewModel.CurrentViewModel 经 ContentControl 渲染） -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">

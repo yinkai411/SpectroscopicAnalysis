@@ -77,6 +77,9 @@ public sealed partial class MainViewModel : ObservableObject
         CurrentViewModel = item.Target;
         SelectedNav = item;
         item.IsSelected = true;
+
+        // 页面生命周期：进入页面时加载该页数据（实现者按需）
+        (item.Target as IPageLifecycle)?.OnNavigatedTo();
     }
 
     /// <summary>切换缩放档位（XAML CommandParameter 为字符串，命令侧解析；非法值忽略）。</summary>

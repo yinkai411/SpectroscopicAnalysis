@@ -8,7 +8,7 @@ public sealed class MainViewModelTests
 {
     private static MainViewModel CreateMain() => new(
         new DashboardViewModel(),
-        new SamplesViewModel(),
+        new SamplesViewModel(new FakeSampleRepository(), new FakeUiDispatcher()),
         new SctViewModel(),
         new CoefficientsViewModel(),
         new AlarmsViewModel(),

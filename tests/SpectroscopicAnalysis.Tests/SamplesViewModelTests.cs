@@ -11,6 +11,9 @@ internal sealed class FakeSampleRepository : ISctSampleRepository
 {
     public List<SctSample> Store { get; } = new();
 
+    /// <summary>DeleteWithChildren 调用记录（供断言）。</summary>
+    public List<string> DeletedWithChildren { get; } = new();
+
     public SctSample? GetById(string sampleId) => Store.FirstOrDefault(s => s.SampleId == sampleId);
 
     public IReadOnlyList<SctSample> GetAll() => Store.ToList();
@@ -20,6 +23,12 @@ internal sealed class FakeSampleRepository : ISctSampleRepository
     public void Update(SctSample sample) { }
 
     public void Delete(string sampleId) { }
+
+    public void DeleteWithChildren(string sampleId)
+    {
+        DeletedWithChildren.Add(sampleId);
+        Store.RemoveAll(s => s.SampleId == sampleId);
+    }
 
     public void UpdateAfterSpark(string sampleId, double currentThickness, string status, DateTime usedAt) { }
 }
@@ -135,5 +144,71 @@ public sealed class SamplesViewModelTests
         await vm.LoadCommand.ExecuteAsync(null);
         await vm.LoadCommand.ExecuteAsync(null);
         Assert.Single(vm.SctSamples);
+    }
+
+    [Fact]
+    public async Task RequestDelete_两步确认_单行待确认()
+    {
+        var vm = CreateWith(
+            Make("SUS-001", SampleType.SettingUp),
+            Make("SUS-002", SampleType.SettingUp));
+        await vm.LoadCommand.ExecuteAsync(null);
+
+        var row1 = vm.SctSamples[0];
+        var row2 = vm.SctSamples[1];
+
+        vm.RequestDeleteCommand.Execute(row1);
+        Assert.True(row1.IsConfirmDelete);
+        Assert.False(row2.IsConfirmDelete);
+
+        // 点击另一行：确认态转移到新行
+        vm.RequestDeleteCommand.Execute(row2);
+        Assert.False(row1.IsConfirmDelete);
+        Assert.True(row2.IsConfirmDelete);
+
+        // 再次点击同一行：取消确认态（两步确认的中途撤销）
+        vm.RequestDeleteCommand.Execute(row2);
+        Assert.False(row2.IsConfirmDelete);
+    }
+
+    [Fact]
+    public async Task ConfirmDelete_调用级联删除并从集合移除()
+    {
+        var vm = CreateWith(
+            Make("SUS-001", SampleType.SettingUp),
+            Make("P-20261110-07", SampleType.Production));
+        await vm.LoadCommand.ExecuteAsync(null);
+
+        var row = vm.SctSamples.First(r => r.SampleId == "SUS-001");
+        vm.RequestDeleteCommand.Execute(row);
+        await vm.ConfirmDeleteCommand.ExecuteAsync(row);
+
+        Assert.Empty(vm.SctSamples);                        // 台账唯一的 SCT 行已移除
+        Assert.DoesNotContain(vm.SctSamples, r => r.SampleId == "SUS-001");
+        Assert.Single(vm.ProductionSamples);                // 生产样品不受影响
+        Assert.Null(vm.DeleteError);
+    }
+
+    [Fact]
+    public async Task ConfirmDelete_生产样品行删除后HasProduction重算()
+    {
+        var vm = CreateWith(Make("P-20261110-07", SampleType.Production));
+        await vm.LoadCommand.ExecuteAsync(null);
+        Assert.True(vm.HasProduction);
+
+        var row = vm.ProductionSamples[0];
+        vm.RequestDeleteCommand.Execute(row);
+        await vm.ConfirmDeleteCommand.ExecuteAsync(row);
+
+        Assert.False(vm.HasProduction);                     // 删除后空态恢复
+    }
+
+    [Fact]
+    public async Task ConfirmDelete_空参数不抛异常()
+    {
+        var vm = CreateWith(Make("SUS-001", SampleType.SettingUp));
+        await vm.LoadCommand.ExecuteAsync(null);
+        vm.ConfirmDeleteCommand.Execute(null);
+        Assert.Single(vm.SctSamples);                       // 状态不变
     }
 }

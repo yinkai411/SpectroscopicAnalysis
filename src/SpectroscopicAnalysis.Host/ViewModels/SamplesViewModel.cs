@@ -9,11 +9,16 @@ namespace SpectroscopicAnalysis.Host.ViewModels;
 
 /// <summary>
 /// 台账行展示模型：领域数据 → 展示文本映射（开发规范 3.3：VM 负责映射为展示模型）。
-/// SampleTypeKey 为类型键（筛选用，非绑定字段）；Status 为原始枚举串（视图 DataTrigger 切换徽章颜色）。
+/// SampleTypeKey 为类型键（筛选用，非绑定字段）；Status 为原始枚举串（视图 DataTrigger 切换徽章颜色）；
+/// IsConfirmDelete 为删除两步确认态（视图 DataTrigger 切换按钮样式）。
 /// </summary>
-public sealed class SampleRowItem
+public sealed partial class SampleRowItem : ObservableObject
 {
+    [ObservableProperty]
+    private bool _isConfirmDelete;
+
     public required string SampleId { get; init; }
+    public required string SampleName { get; init; }
     public required string SampleTypeKey { get; init; }
     public required string TypeDisplay { get; init; }
     public string? AlloyType { get; init; }
@@ -57,6 +62,10 @@ public sealed partial class SamplesViewModel : ObservableObject, IPageLifecycle
     /// <summary>正在加载标记（防重复加载）。</summary>
     [ObservableProperty]
     private bool _isLoading;
+
+    /// <summary>删除失败提示（空即无错误；如数据库约束冲突）。</summary>
+    [ObservableProperty]
+    private string? _deleteError;
 
     // ==================== 样品注册（任务清单"入库初始化"） ====================
 
@@ -284,9 +293,57 @@ public sealed partial class SamplesViewModel : ObservableObject, IPageLifecycle
         SctSamples = new ObservableCollection<SampleRowItem>(filtered);
     }
 
+    // ==================== 样品删除（两步确认，危险操作） ====================
+
+    /// <summary>第一步：标记待删除行（同时复位其他行的确认态，保证单行待确认）。</summary>
+    [RelayCommand]
+    private void RequestDelete(SampleRowItem? row)
+    {
+        if (row is null)
+        {
+            return;
+        }
+
+        DeleteError = null;
+        foreach (var r in _allSctRows)
+        {
+            r.IsConfirmDelete = ReferenceEquals(r, row) && !r.IsConfirmDelete;
+        }
+    }
+
+    /// <summary>第二步：确认删除——事务级联删除（样品+标准值+控制限；操作日志保留）后刷新集合。</summary>
+    [RelayCommand]
+    private async Task ConfirmDeleteAsync(SampleRowItem? row)
+    {
+        if (row is null || IsLoading)
+        {
+            return;
+        }
+
+        DeleteError = null;
+        var snapshot = row;
+        try
+        {
+            await Task.Run(() => _samples.DeleteWithChildren(snapshot.SampleId));
+            _ui.Invoke(() =>
+            {
+                _allSctRows = _allSctRows.Where(r => !ReferenceEquals(r, snapshot)).ToList();
+                ProductionSamples = new ObservableCollection<SampleRowItem>(
+                    ProductionSamples.Where(r => !ReferenceEquals(r, snapshot)));
+                ApplyFilter(FilterKey);
+                HasProduction = ProductionSamples.Count > 0;
+            });
+        }
+        catch (Microsoft.Data.Sqlite.SqliteException ex)
+        {
+            DeleteError = $"删除失败：{ex.Message}";
+        }
+    }
+
     private static SampleRowItem MapRow(SctSample s) => new()
     {
         SampleId = s.SampleId,
+        SampleName = s.SampleName,
         SampleTypeKey = s.SampleType,
         TypeDisplay = s.SampleType switch
         {

@@ -131,7 +131,22 @@
             <!-- SCT 样品台账（真实数据） -->
             <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
                 <StackPanel>
-                    <TextBlock Text="SCT 样品台账" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock Text="SCT 样品台账" Style="{StaticResource Text.CardTitle}" />
+                        <TextBlock Text="{Binding DeleteError}" HorizontalAlignment="Right"
+                                   Foreground="{DynamicResource Brush.Status.Failed}" TextWrapping="Wrap" MaxWidth="600">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DockPanel>
                     <DataGrid ItemsSource="{Binding SctSamples}" AutoGenerateColumns="False"
                               IsReadOnly="True" CanUserAddRows="False" CanUserSortColumns="False"
                               HeadersVisibility="Column" GridLinesVisibility="Horizontal"
@@ -139,6 +154,7 @@
                               RowBackground="Transparent" AlternatingRowBackground="Transparent">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="SampleID" Binding="{Binding SampleId}" FontFamily="Consolas" />
+                            <DataGridTextColumn Header="样品名称" Binding="{Binding SampleName}" />
                             <DataGridTextColumn Header="类型" Binding="{Binding TypeDisplay}" />
                             <DataGridTextColumn Header="合金" Binding="{Binding AlloyType}" />
                             <DataGridTextColumn Header="架位" Binding="{Binding RackPosition}" />
@@ -192,9 +208,53 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="上次测高" Binding="{Binding LastHeightText}" />
+                            <!-- 删除（两步确认：Danger 样式 + IsConfirmDelete 切换文案） -->
+                            <DataGridTemplateColumn Header="操作">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Button Content="删除" Cursor="Hand" Padding="10,3" FontSize="{DynamicResource FontSize.Caption}"
+                                                    Background="Transparent" Foreground="{DynamicResource Brush.Danger}"
+                                                    BorderBrush="{DynamicResource Brush.Danger}" BorderThickness="1"
+                                                    Command="{Binding DataContext.RequestDeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                        <Setter Property="MinWidth" Value="0" />
+                                                        <Setter Property="MinHeight" Value="0" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsConfirmDelete}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button Content="确认删除？" Cursor="Hand" Padding="10,3" FontSize="{DynamicResource FontSize.Caption}"
+                                                    Command="{Binding DataContext.ConfirmDeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="{DynamicResource Brush.Danger}" Foreground="White"
+                                                    BorderThickness="0" FontWeight="SemiBold">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                        <Setter Property="MinWidth" Value="0" />
+                                                        <Setter Property="MinHeight" Value="0" />
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsConfirmDelete}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBlock Text="使用次数达到上限自动标记「需测高」；厚度低于最小厚度自动「禁用」并报警更换" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
+                    <TextBlock Text="使用次数达到上限自动标记「需测高」；厚度低于最小厚度自动「禁用」并报警更换；删除为两步确认（级联删除标准值与控制限，操作日志保留）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
                 </StackPanel>
             </Border>
 

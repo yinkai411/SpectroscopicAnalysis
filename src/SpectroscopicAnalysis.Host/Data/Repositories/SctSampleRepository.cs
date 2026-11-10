@@ -91,6 +91,22 @@ public sealed class SctSampleRepository : ISctSampleRepository
         tx.Commit();
     }
 
+    /// <summary>单事务级联删除：控制限 → 标准值 → 样品本体；操作日志保留（审计追溯）。</summary>
+    public void DeleteWithChildren(string sampleId)
+    {
+        using var conn = _db.Open();
+        using var tx = conn.BeginTransaction();
+        foreach (var table in new[] { "ControlLimit", "SCT_CertifiedValue", "SCT_Sample" })
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.Transaction = tx;
+            cmd.CommandText = $"DELETE FROM {table} WHERE SampleID = $id";
+            cmd.Parameters.AddWithValue("$id", sampleId);
+            cmd.ExecuteNonQuery();
+        }
+        tx.Commit();
+    }
+
     /// <summary>激发后持久化（事务）：次数 +1、当前厚度、状态、上次使用时间。</summary>
     public void UpdateAfterSpark(string sampleId, double currentThickness, string status, DateTime usedAt)
     {

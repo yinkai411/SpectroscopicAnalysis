@@ -24,7 +24,7 @@
             <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
                 <StackPanel>
                     <TextBlock Text="操作日志" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
-                    <TextBlock Text="时间 / 动作 / 对象 / 上下文 / 起止 / 结果 / 操作者（审计要求全字段）" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                    <TextBlock Text="时间 / 动作 / 对象 / 上下文 / 起止 / 结果（审计要求全字段）" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
                     <TextBlock Text="（数据随 D9 错误链路接入）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
                 </StackPanel>
             </Border>

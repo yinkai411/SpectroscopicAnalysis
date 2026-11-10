@@ -43,7 +43,7 @@ public sealed class DbInitializer
             Uncertainty    REAL
         );
         """,
-        // 校正系数表（版本化：IsCurrent + Version，旧版本归档不删除）
+        // 校正系数表（版本化：IsCurrent + Version，旧版本归档不删除；不含操作者字段——身份内容已移除）
         """
         CREATE TABLE IF NOT EXISTS CorrectionCoefficient (
             CoeffID          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,7 +54,6 @@ public sealed class DbInitializer
             EffectiveTime    TEXT NOT NULL,
             SourceSampleID   TEXT,
             IsCurrent        INTEGER NOT NULL DEFAULT 0,
-            Operator         TEXT,
             ReferenceElement TEXT,
             Version          INTEGER NOT NULL DEFAULT 1
         );

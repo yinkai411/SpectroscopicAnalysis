@@ -14,17 +14,10 @@
                 </StackPanel>
             </Border>
 
-            <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
+            <Border Style="{StaticResource Card}">
                 <StackPanel>
                     <TextBlock Text="全局策略" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
                     <TextBlock Text="测高触发 · 样品位置一致性校验 · SCT 期间生产队列暂停 · 报警提示音 · 归档标签打印机" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
-
-            <Border Style="{StaticResource Card}">
-                <StackPanel>
-                    <TextBlock Text="用户与权限" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
-                    <TextBlock Text="管理员 / 操作员 / 观察员（系数修改、模式切换需管理员）" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </StackPanel>

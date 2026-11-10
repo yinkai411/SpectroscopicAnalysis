@@ -24,7 +24,7 @@
             <Border Style="{StaticResource Card}">
                 <StackPanel>
                     <TextBlock Text="标准化 / 控制检查记录" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
-                    <TextBlock Text="时间 / 操作类型 / 样品 / 触发原因 / 结果 / 系数变更 / 偏差 / 操作者" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                    <TextBlock Text="时间 / 操作类型 / 样品 / 触发原因 / 结果 / 系数变更 / 偏差" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
                     <TextBlock Text="（数据随 M2 SctStrategyEngine 接入）" Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
                 </StackPanel>
             </Border>

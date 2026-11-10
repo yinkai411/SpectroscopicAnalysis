@@ -44,7 +44,6 @@
                     </StackPanel>
                     <TextBlock Text="2026-11-10 09:40" FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,16,0"
                                FontSize="{DynamicResource FontSize.Caption}" Foreground="{DynamicResource Brush.Text.Secondary}" />
-                    <TextBlock Text="操作员：张工" Style="{StaticResource Text.Caption}" VerticalAlignment="Center" Margin="0,0,16,0" />
                     <Button Style="{StaticResource ModeBtn}" Content="100%" Command="{Binding SetScaleCommand}" CommandParameter="1.0" Margin="0,0,4,0" />
                     <Button Style="{StaticResource ModeBtn}" Content="125%" Command="{Binding SetScaleCommand}" CommandParameter="1.25" Margin="0,0,4,0" />
                     <Button Style="{StaticResource ModeBtn}" Content="150%" Command="{Binding SetScaleCommand}" CommandParameter="1.5" Margin="0,0,12,0" />

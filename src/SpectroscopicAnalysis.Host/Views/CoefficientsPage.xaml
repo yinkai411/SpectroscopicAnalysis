@@ -17,7 +17,7 @@
             <Border Style="{StaticResource Card}" Margin="{DynamicResource Spacing.CardGap}">
                 <StackPanel>
                     <TextBlock Text="变更历史" Style="{StaticResource Text.CardTitle}" Margin="0,0,0,8" />
-                    <TextBlock Text="时间 / 元素 / 变更前（a/b）/ 变更后（a/b）/ 版本 / 原因 / 来源 / 操作者" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
+                    <TextBlock Text="时间 / 元素 / 变更前（a/b）/ 变更后（a/b）/ 版本 / 原因 / 来源" Style="{StaticResource Table.Header}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
 

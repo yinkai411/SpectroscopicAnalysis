@@ -52,6 +52,19 @@ public sealed class DbInitializerTests
         Assert.False(reader.Read());
     }
 
+    [Fact]
+    public void CorrectionCoefficient_不含操作者列()
+    {
+        // 身份内容防回归：程序不得包含操作者字段（开发规范第 5 节决策）
+        using var db = new TestDb();
+        new DbInitializer(db.Db).EnsureCreated();
+
+        using var conn = db.Db.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM pragma_table_info('CorrectionCoefficient') WHERE name = 'Operator';";
+        Assert.Equal(0L, Convert.ToInt64(cmd.ExecuteScalar()));
+    }
+
     private static List<string> QueryTableNames(Host.Data.Database.Db db)
     {
         using var conn = db.Open();

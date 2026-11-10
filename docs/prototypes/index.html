@@ -8,7 +8,7 @@
   .hero { max-width: 1200px; margin: 48px auto; padding: 0 16px; }
   .hero h1 { font-size: 28px; font-weight: 600; }
   .hero p.desc { color: var(--color-text-secondary); margin: 8px 0 32px; line-height: 1.8; }
-  .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .entries { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
   .entry {
     display: block; text-decoration: none;
     background: var(--color-bg-card);
@@ -31,7 +31,8 @@
     <p class="desc">
       依据 <b>docs/界面设计规范.md</b> 制作的高保真静态原型（浅色简洁风 + HandyControl 语义），
       设计基准 <b>1920×1080</b>，色板/字号/布局与规范一一对应，作为 WPF 开发的像素级参照。<br>
-      点击下方卡片进入各页面；页面内可体验：系统模式二次确认、急停确认、报警分级展示等交互规则。
+      点击下方卡片进入各页面；页面内可体验：系统模式二次确认、急停确认、报警分级展示等交互规则。<br>
+      原型已按<b>弹性布局规则</b>（界面设计规范第 5 节）实现：侧栏/卡片/字体随窗口伸缩，支持 1024–4K 视口无破版。
     </p>
 
     <div class="entries">
